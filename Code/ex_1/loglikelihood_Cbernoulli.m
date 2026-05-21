@@ -1,7 +1,7 @@
-function log_likelihood = loglikelihood_Cbernoulli(X,mu,sigma,p,rho)
+function log_likelihood = loglikelihood_Cbernoulli(X,mu,sigma,p)
 
-values = arrayfun(@(i) likelihood_comb_bernoulli(rho, X(i,:)', p, mu, sigma), 1:size(X,1));
-log_likelihood= sum(values);
- 
+log_likelihood= @(rho)(sum(arrayfun(@(i) likelihood_comb_bernoulli(rho, X(i,:)',...
+    p, mu, sigma), 1:size(X,1))));
+
 
 end
