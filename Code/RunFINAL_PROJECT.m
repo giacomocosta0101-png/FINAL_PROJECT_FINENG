@@ -13,6 +13,10 @@ p_i = mean(contents_buildings_jump>0);
 p_b = mean(buildings_jump);
 p_c = mean(contents_jump);
 
+%% Marginals parameters calibration
+
+[p, mu, sigma] = marginal_parameter_calibration(data);
+
 %%
 rho = [1 2 3 4 5 6]';
 x = [1 2 3 4];
