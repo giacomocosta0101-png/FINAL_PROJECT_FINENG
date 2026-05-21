@@ -53,3 +53,38 @@ x = X(1,:);
 
 log_likelihood = loglikelihood_Cbernoulli(X,mu,sigma,p,rho);
 %FUNGE
+%%
+
+[p, mu, sigma, var_names] = marginal_parameter_calibration(data);
+
+A = [];
+b = [];
+Aeq = [];
+beq = []; 
+
+lb = [-1,-1,-1];
+ub = [1,1,1];  
+
+%%
+X = [0 0 1;
+    4 0 4;
+    7 4 0];
+
+log_likelihood = loglikelihood_Cbernoulli(X,mu,sigma,p);
+%%
+lb = [-0.99,-0.99,-0.99];
+ub = [0.99,0.99,0.99];
+A = [];
+b = [];
+Aeq = [];
+beq = [];
+
+function [c,ceq] = semi_positive_def(rho)
+c = -eig(squareform(rho)+eye(3));
+ceq = [];
+end
+
+nonlincon = @semi_positive_def;
+
+
+rho = fmincon(log_likelihood,[0.5 0.5 0.5],A,b,Aeq,beq,lb,ub,nonlincon); 
