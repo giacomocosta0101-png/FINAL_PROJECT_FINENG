@@ -32,7 +32,7 @@ mu = [3 4 5 9];
 
 sigma = [1 3 5 0.3];
 p = [0.1 0.3 0.6 0.9];
-rho = [0.3 0.2 -0.1 -0.5 0.9 0.35];
+rho = [0.3 0.2 0.1 0.5 0.4 0.35];
 x = X(1,:);
 
 log_likelihood = loglikelihood_Cbernoulli(X,mu,sigma,p,rho);
