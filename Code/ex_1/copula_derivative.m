@@ -37,7 +37,7 @@ elseif isempty(tt)
     derivative = mvnpdf(zs, zeros(size(zs)), Rss) / mvnpdf(zs);
 else
     derivative = ( mvnpdf(zs, zeros(size(zs)), Rss) / mvnpdf(zs) ) * ...
-                 mvncdf(zt - Rts*(Rss\(zs')), zeros(size(zt)), Rtt - Rts*(Rss\Rst));
+                 mvncdf(zt - (Rts * (Rss \ zs.')).', zeros(size(zt)), Rtt - Rts*(Rss\Rst));
 end
 
 
