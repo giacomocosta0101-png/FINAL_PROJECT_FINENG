@@ -23,19 +23,26 @@ zs = zs(:).';
 zt = zt(:).';
 
 [~,Rss, Rtt, Rst, Rts] = corr_matrix(x,rho);
-Rss
-Rtt
-Rst
-Rts
 
 ss = find(x>0);
 tt = find(x==0);
+
+%We check is SPD:
+    [~, flag1] = chol(Rss);
+    [~, flag2] = chol(Rtt);
+    [~, flag3] = chol(Rtt - Rts*(Rss\Rst));
+
+    if flag1 ~= 0 || flag2 ~= 0 || flag3 ~= 0
+        derivative = realmin;
+        return
+    end
 
 if isempty(ss)
     derivative = mvncdf(zt, zeros(size(zt)), Rtt);
 elseif isempty(tt)
     derivative = mvnpdf(zs, zeros(size(zs)), Rss) / mvnpdf(zs);
 else
+
     derivative = ( mvnpdf(zs, zeros(size(zs)), Rss) / mvnpdf(zs) ) * ...
                  mvncdf(zt - (Rts * (Rss \ zs.')).', zeros(size(zt)), Rtt - Rts*(Rss\Rst));
 end

@@ -37,11 +37,6 @@ if numel(rho) ~= expected_num_rho
     error('rho and x dimentions are incompatible');
 end
 
-if any(abs(rho) > 1)
-    error('Each entry of rho must lie in the interval [-1, 1]');
-end
-
-
 %% Core function
 
 %define active set S(x) and T(x) its complementary
