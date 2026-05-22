@@ -49,7 +49,7 @@ for i = 1:1e3
 
 
     Rho_calibr= corr(U,U, 'Type', 'Pearson');
-    Rho_calibrated (i)= Rho_calibr(1,2);
+    Rho_calibrated (i) = Rho_calibr(1,2);
 
 
 end

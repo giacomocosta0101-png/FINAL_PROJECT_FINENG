@@ -1,0 +1,54 @@
+function log_likelihood = log_likelihood_CB(mask,theta,p,Z,psi,ia,ic,num_comb)
+
+L = [1 0 0;
+    cos(theta(1)) sin(theta(1)) 0;
+    cos(theta(2)) cos(theta(3))*sin(theta(2)) sin(theta(3))*sin(theta(2))];
+
+R = L*L';
+
+log_likelihood = 0;
+
+for i = 1:num_comb
+    rows = (i == ic);
+    s    = mask(ia(i),:);
+    ss   = find(s > 0);
+    tt   = find(s == 0);
+
+    Rss = R(ss, ss);
+    Rtt = R(tt, tt);
+    Rst = R(ss, tt);
+    Rts = R(tt, ss);
+
+    zs      = Z(rows, ss);
+    zt      = Z(rows, tt);
+    psi_ss  = psi(rows, ss);
+    p_ss    = reshape(p(ss), 1, []); 
+
+    if isempty(ss)
+       
+        log_dens = log( mvncdf(zt, zeros(1, numel(tt)), Rtt) );
+
+    elseif isempty(tt)
+       
+        log_copula = log( mvnpdf(zs, zeros(1, numel(ss)), Rss) ) ...
+                   - log( mvnpdf(zs) );                     
+        log_marg   = sum( log(p_ss .* psi_ss), 2 );
+        log_dens   = log_copula + log_marg;
+
+    else
+        
+        log_copula = log( mvnpdf(zs, zeros(1, numel(ss)), Rss) ) ...
+                   - log( mvnpdf(zs) );
+                     
+
+        log_cdf    = log( mvncdf(zt - (Rts * (Rss \ zs.')).',...
+            zeros(1, numel(tt)), Rtt - Rts * (Rss \ Rst)) );
+        log_marg   = sum( log(p_ss .* psi_ss), 2 );
+
+        log_dens   = log_copula + log_cdf + log_marg;
+    end
+
+    log_likelihood = log_likelihood + sum(log_dens);
+end
+
+end
