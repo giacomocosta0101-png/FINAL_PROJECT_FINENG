@@ -4,48 +4,53 @@ function sim = copula_sim(R, mu, sigma, N)
 %
 % INPUT:
 %   R      : d x d Gaussian copula correlation matrix
-%   mu     : mean vector
-%   sigma  : std dev vector
+%            or scalar rho in the bivariate case
+%   mu     : mean vector of lognormal marginals
+%   sigma  : std dev vector of lognormal marginals
 %   N      : number of simulations
 %
 % OUTPUT:
 %   sim    : N x d matrix of simulated observations
 
-%% Input checks
+%% Input handling and Checks
 
-if ~ismatrix(R) || size(R,1) ~= size(R,2)
-    error('R must be a square matrix.');
-end
 
-% Force row vectors
 mu = mu(:)';
 sigma = sigma(:)';
 
-% Dimension
-d = size(R, 1);
+d = numel(mu);
 
-
-
-%% Core
-
-% Simulate Gaussian copula driver
-Z = mvnrnd(zeros(1,d), R, N);
-
-% Transform to lognormal marginals
-sim = exp(mu + sigma .* Z);
-
+if numel(sigma) ~= d
+    error('mu and sigma must have the same length.');
 end
 
 
+%I had to add this since bc of tecnical mvnrnd reasons
+% Basically if you pass a scalar correlation to mvnrnd it read it as a
+% single sigma for 2 independet marginals
 
-%Unoptimezed old version:
+% If R is scalar, interpret it as bivariate correlation rho
+if isscalar(R)
 
-%Z = mvnrnd(zeros(1,d), R, N);
-%U = normcdf(Z);
-%
-%sim = zeros(N,l);
-%
-%for i=1:l
-%    sim(:,i) = exp(norminv(U(:,i)).*sigma(i) + mu(i));
-%end
-%
+    rho = R;
+    R = [1 rho; rho 1];
+
+else
+
+    if size(R,1) ~= size(R,2)
+        error('You passed a non sqaure R matrix ');
+    end
+
+    if size(R,1) ~= d
+        error('Dimension mismatch between R and mu/sigma.');
+    end
+
+end
+
+%% Core simulation
+
+Z = mvnrnd(zeros(1,d), R, N);
+
+sim = exp(mu + sigma .* Z);
+
+end

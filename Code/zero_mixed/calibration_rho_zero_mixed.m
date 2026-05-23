@@ -6,6 +6,7 @@ function rho = calibration_rho_zero_mixed(X)
 %   d = 2 -> returns scalar rho_12
 %   d = 3 -> returns 3x3 correlation matrix
 %
+% This function is precisely correct and follows what Massaria described
 
 %% Input check
 
