@@ -82,7 +82,7 @@ for k = 1:8
 
     if numel(idx_active) >= 2
 
-        if n >= 1
+        if n >= 2
 
             rho = calibration_rho_zero_mixed(X_active);
             %calibration_rho_zero_mixed returns a scalar in the case of

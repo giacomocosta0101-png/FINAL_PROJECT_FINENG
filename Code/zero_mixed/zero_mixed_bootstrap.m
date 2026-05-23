@@ -74,14 +74,14 @@ for j = 1:8
     x = boot_prob(:,j);
     x = x(~isnan(x));
 
-    prob_CI(:,j) = quantile(x, [alpha/4, 1-alpha/4]);
+    prob_CI(:,j) = quantile(x, [alpha/14, 1-alpha/14]);
 end
 
 for j = 1:6
     x = boot_rho(:,j);
     x = x(~isnan(x));
 
-    rho_CI(:,j) = quantile(x, [alpha/4, 1-alpha/4]);
+    rho_CI(:,j) = quantile(x, [alpha/14, 1-alpha/14]);
 end
 
 
