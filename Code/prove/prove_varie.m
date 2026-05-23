@@ -82,6 +82,8 @@ rho(3) = cos(theta_opt(1))*cos(theta_opt(2))+sin(theta_opt(1))*cos(theta_opt(3))
 
 R = squareform(rho)+eye(3);
 R
+
+%%
 R([1 0 1],[0 1 0])
 theta_opt
 %%
@@ -97,7 +99,7 @@ U_3 = cdf_semiparametric_3(X(:,3));
 U = [U_1 U_2 U_3];
 
 Z = norminv(U);
-
+%%
 z1 = norminv(1-p(1));
 z2 = norminv(1-p(2));
 
@@ -106,3 +108,35 @@ g = @(theta) g_rho(theta,p([1 2]),U,z1,z2,Z);
 rho_hat = fzero(g,pi/3);
 %%
 sin(rho_hat)
+
+%%
+
+mask = X >0;
+[C,ia,ic] = unique(mask,'rows');
+
+mask(ia(6),:)
+
+%%
+model = 'Comb-Bernoulli';
+alpha = 0.05;
+B = 1e3;
+N = size(X,1);
+
+%%[rho_CI, p_CI]= bootstrap(rho,p,mu,sigma,model,N,B,alpha);
+%%
+model = 'Semi-parametric';
+alpha = 0.05;
+B = 1e3;
+N = size(X,1);
+
+[rho_CI, p_CI]= bootstrap(rho,p,mu,sigma,model,N,B,alpha);
+
+%%
+
+
+
+
+
+
+
+

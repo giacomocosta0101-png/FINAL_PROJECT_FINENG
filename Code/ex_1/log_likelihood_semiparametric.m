@@ -7,6 +7,8 @@ L = [1 0 0;
 
 R = L*L';
 
+log_likelihood = 0;
+
 for i = 1:num_comb
     rows = (i == ic);
     s    = mask(ia(i),:);
