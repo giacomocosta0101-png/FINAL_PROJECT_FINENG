@@ -42,7 +42,7 @@ U_CB = cdf_comb_bernoulli(X);
 R_CB = squareform(rho_CB) + eye(length(rho_CB));
 fprintf("\n Correlation matrix:\n");
 disp(R_CB);
-
+%%
 fprintf(" Bootstrap:\n");
 rng default;
 model2 = 'Comb-Bernoulli';
@@ -56,7 +56,7 @@ fprintf("\n  p1: [ %.3f , %.3f ]\n", p_CI_CB(1,1), p_CI_CB(1,2));
 fprintf("  p2: [ %.3f , %.3f ]\n", p_CI_CB(2,1), p_CI_CB(2,2));
 fprintf("  p3: [ %.3f , %.3f ]\n", p_CI_CB(3,1), p_CI_CB(3,2));
 
-%% Semi-parametric
+%% Semi-parametric - VEDI SOTTO VERSIONE IN UNA SOLA FUNZIONE
 fprintf("\nSemi-Parametric\n");
 
 cdf_semiparametric_1 = cumulative_cdf_semi_parametric(p(1),X(:,1));
@@ -74,7 +74,7 @@ U_SP = [U_1 U_2 U_3];
 R_SP = squareform(rho_SP) + eye(length(rho_SP));
 fprintf("\n Correlation matrix:\n");
 disp(R_SP);
-
+%%
 fprintf(" Bootstrap:\n");
 rng default;
 model3 = 'Semi-parametric';
@@ -87,4 +87,18 @@ fprintf("  Rho_23: [ %.3f , %.3f ]\n", rho_CI_SP(3,1), rho_CI_SP(3,2));
 fprintf("\n  p1: [ %.3f , %.3f ]\n", p_CI_SP(1,1), p_CI_SP(1,2));
 fprintf("  p2: [ %.3f , %.3f ]\n", p_CI_SP(2,1), p_CI_SP(2,2));
 fprintf("  p3: [ %.3f , %.3f ]\n", p_CI_SP(3,1), p_CI_SP(3,2));
+
+
+%% SEMI-PARAMETRIC IN UNA SOLA FUNZIONE
+
+cdf_semiparametric = cumulative_cdf_semi_parametric_vec(p,X);
+
+U_SP = zeros(size(X));
+for i = 1:size(X,2)
+    U_SP(:,i) = cdf_semiparametric{i}(X(:,i));
+end
+
+[rho_SP2,~] = calibrate_model(U_SP,p);
+
+
 
