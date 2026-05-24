@@ -20,10 +20,12 @@ N = size(X,1);
 
 [p, mu, sigma] = marginal_parameter_calibration(data);
 
-fprintf("\nMarginal cdf parameters:");
-fprintf("\n Mu    = %.2f", mu);
-fprintf("\n Sigma = %.2f", sigma);
-fprintf("\n\nProbabilities:");
+fprintf("\nMarginal cdf parameters:\n");
+for i = 1:length(mu)
+    fprintf("\n mu_%d    = %.2f", i, mu(i));
+    fprintf("\n sigma_%d = %.2f\n", i, sigma(i));
+end
+fprintf("\nProbabilities:");
 fprintf("\n p1 = %.2f", p(1));
 fprintf("\n p2 = %.2f", p(2));
 fprintf("\n p3 = %.2f\n", p(3));
@@ -38,13 +40,24 @@ U_CB = cdf_comb_bernoulli(X);
 [rho_CB,~] = calibrate_model(U_CB,p);
 
 R_CB = squareform(rho_CB) + eye(length(rho_CB));
-fprintf("\n  Correlation matrix:\n");
+fprintf("\n Correlation matrix:\n");
 disp(R_CB);
 
+fprintf(" Bootstrap:\n");
+rng default;
 model2 = 'Comb-Bernoulli';
 [rho_CI_CB, p_CI_CB] = bootstrap(rho_CB,p,mu,sigma,model2,N,B,alpha);
 
+fprintf(" \n Confidence intervals:\n\n");
+fprintf("  Rho_12: [ %.3f , %.3f ]\n", rho_CI_CB(1,1), rho_CI_CB(1,2));
+fprintf("  Rho_13: [ %.3f , %.3f ]\n", rho_CI_CB(2,1), rho_CI_CB(2,2));
+fprintf("  Rho_23: [ %.3f , %.3f ]\n", rho_CI_CB(3,1), rho_CI_CB(3,2));
+fprintf("\n  p1: [ %.3f , %.3f ]\n", p_CI_CB(1,1), p_CI_CB(1,2));
+fprintf("  p2: [ %.3f , %.3f ]\n", p_CI_CB(2,1), p_CI_CB(2,2));
+fprintf("  p3: [ %.3f , %.3f ]\n", p_CI_CB(3,1), p_CI_CB(3,2));
+
 %% Semi-parametric
+fprintf("\nSemi-Parametric\n");
 
 cdf_semiparametric_1 = cumulative_cdf_semi_parametric(p(1),X(:,1));
 U_1 = cdf_semiparametric_1(X(:,1));
@@ -58,5 +71,20 @@ U_3 = cdf_semiparametric_3(X(:,3));
 U_SP = [U_1 U_2 U_3];
 [rho_SP,~] = calibrate_model(U_SP,p);
 
+R_SP = squareform(rho_SP) + eye(length(rho_SP));
+fprintf("\n Correlation matrix:\n");
+disp(R_SP);
+
+fprintf(" Bootstrap:\n");
+rng default;
 model3 = 'Semi-parametric';
 [rho_CI_SP, p_CI_SP]= bootstrap(rho_SP,p,mu,sigma,model3,N,B,alpha);
+
+fprintf(" \n Confidence intervals:\n\n");
+fprintf("  Rho_12: [ %.3f , %.3f ]\n", rho_CI_SP(1,1), rho_CI_SP(1,2));
+fprintf("  Rho_13: [ %.3f , %.3f ]\n", rho_CI_SP(2,1), rho_CI_SP(2,2));
+fprintf("  Rho_23: [ %.3f , %.3f ]\n", rho_CI_SP(3,1), rho_CI_SP(3,2));
+fprintf("\n  p1: [ %.3f , %.3f ]\n", p_CI_SP(1,1), p_CI_SP(1,2));
+fprintf("  p2: [ %.3f , %.3f ]\n", p_CI_SP(2,1), p_CI_SP(2,2));
+fprintf("  p3: [ %.3f , %.3f ]\n", p_CI_SP(3,1), p_CI_SP(3,2));
+
