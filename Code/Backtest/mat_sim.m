@@ -26,3 +26,4 @@ obj{1} = X_zero_mixed;
 obj{2} = X_comb_ber;
 obj{3} = X_semi_parametric;
 
+end
