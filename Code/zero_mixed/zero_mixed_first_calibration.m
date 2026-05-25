@@ -82,15 +82,6 @@ masks{7} = (B == 0) & (C > 0) & (P > 0);
 % three jumps
 masks{8} = (B > 0) & (C > 0) & (P > 0);
 
-%% Find global mu and sigma for the marginals
-
-mu_B = mean(log(B(B>0)));
-mu_C = mean(log(C(C>0)));
-mu_D = mean(log(P(P>0)));
-
-sigma_B = std(log(B(B>0)));
-sigma_C = std(log(C(C>0)));
-sigma_P = std(log(P(P>0)));
 
 %% Calibration loop
 
@@ -125,7 +116,7 @@ for k = 1:8
         logX = log(X_active);
 
         out.mu    = mean(logX, 1);
-        out.sigma = std(logX, 0, 1);
+        out.sigma = sqrt(mean((logX - out.mu).^2, 1));   % MLE estimator
 
     end
 
@@ -136,7 +127,7 @@ for k = 1:8
     if numel(idx_active) >= 2
 
         if out.n >= 2
-            out.rho = calibration_rho_zero_mixed(X_active);
+            out.rho = calibration_rho_zero_mixed(X_active, out.mu, out.sigma);
         else
             out.rho = NaN(numel(idx_active));
         end

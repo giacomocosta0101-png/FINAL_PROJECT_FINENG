@@ -25,7 +25,6 @@ function sim = zero_mixed_sim(zero_mixed, B, N)
 %% Extract active-set probabilities
 
 
-
 K = 8;
 d = 3;
 
