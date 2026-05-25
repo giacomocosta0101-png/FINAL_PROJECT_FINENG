@@ -31,7 +31,7 @@ for b = 1:B
 
     X_b = zero_sim(:,:,b);
 
-    params_b = zero_mixed_full_calibration(X_b);
+    params_b = zero_mixed_full_calibration(X_b) ;
 
     boot_prob(b,:) = params_b.prob;
     boot_rho(b,:)  = params_b.rho_vec;
@@ -74,14 +74,14 @@ for j = 1:8
     x = boot_prob(:,j);
     x = x(~isnan(x));
 
-    prob_CI(:,j) = quantile(x, [alpha/14, 1-alpha/14]);
+    prob_CI(:,j) = quantile(x, [alpha/28, 1-alpha/28]);
 end
 
 for j = 1:6
     x = boot_rho(:,j);
     x = x(~isnan(x));
 
-    rho_CI(:,j) = quantile(x, [alpha/14, 1-alpha/14]);
+    rho_CI(:,j) = quantile(x, [alpha/28, 1-alpha/28]);
 end
 
 
@@ -90,3 +90,5 @@ prob_CI       % 2x8 confidence intervals
 
 rho_center    % 1x6 point estimates
 rho_CI        % 2x6 confidence intervals
+
+
