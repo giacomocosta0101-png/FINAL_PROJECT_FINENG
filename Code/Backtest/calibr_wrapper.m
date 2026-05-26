@@ -5,7 +5,6 @@ calibrated_parameters = cell(3,1);
 
 
 %% zero mixed
-zero_mixed = struct();
 zero_mixed = zero_mixed_first_calibration(data);
 
 calibrated_parameters{1} = zero_mixed; 

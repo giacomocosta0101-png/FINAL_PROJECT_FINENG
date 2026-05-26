@@ -129,7 +129,7 @@ for k = 1:8
         if out.n >= 2
             out.rho = calibration_rho_zero_mixed(X_active, out.mu, out.sigma);
         else
-            out.rho = NaN(numel(idx_active));
+            out.rho = eye(numel(idx_active));
         end
 
     end

@@ -22,8 +22,8 @@ X = calibrated_parameters{3}.X;
 X_semi_parametric = semi_parametric_losses(rho,p, N,X);
 
 
-obj{1} = X_zero_mixed;
-obj{2} = X_comb_ber;
-obj{3} = X_semi_parametric;
+obj{1} = sum(X_zero_mixed,2);
+obj{2} = sum(X_comb_ber,2);
+obj{3} = sum(X_semi_parametric,2);
 
 end

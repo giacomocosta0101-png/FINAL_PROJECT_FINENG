@@ -1,5 +1,8 @@
 function data_new = data_split(data,start, last)
-%datetime
+
+if nargin < 3
+    last = data.Date(end);
+end
 
 %add a check last>start
 

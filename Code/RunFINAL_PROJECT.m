@@ -100,5 +100,37 @@ end
 
 [rho_SP2,~] = calibrate_model(U_SP,p);
 
+%% Backtest
+
+%calibrating function has as input data (full, timetable)
+% and the calibrating period
+start_date = datetime("01/01/1980");
+end_date = datetime("31/12/1983");
+N = 1000;
+alpha = [0.05 0.01];
+mode = 'Rolling-window';
+data_new = data_split(data,start_date,datetime("31/12/1990"));
+
+tic
+[backtest_window,exceptions,VaR] = backtest(data_new,alpha,start_date,end_date,N,mode);
+toc
+%%
+bw = backtest_window;
+exc = exceptions;
+%%
+% default: 5 eccezioni 99% più gravi annotate
+plot_backtest(bw, exc, VaR, 'Rolling-window', ...
+              'ModelNames', {'Zero_mixed','CB','Semi_par'});
+%%
+
+% se vuoi più dettaglio sulle eccezioni
+plot_backtest(bw, exc, VaR, 'Rolling-window', 'TopK', 10);
+
+%%
+
+% zero annotazioni: solo marker colorati
+plot_backtest(bw, exc, VaR, 'Rolling-window', 'TopK', 0);
+
+%%
 
 

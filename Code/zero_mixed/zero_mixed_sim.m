@@ -81,7 +81,7 @@ for b = 1:B
         else
 
             % Gaussian copula with lognormal marginals
-            R = zero_mixed{k}.rho;
+            R = zero_mixed{k}.rho
 
             X_k = copula_sim(R, mu, sigma, n_k);
 
