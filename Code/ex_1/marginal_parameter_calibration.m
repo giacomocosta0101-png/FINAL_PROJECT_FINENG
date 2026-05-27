@@ -1,10 +1,10 @@
-function [p, mu, sigma, var_names] = marginal_parameter_calibration(X, var_names)
+function marginal_params = marginal_parameter_calibration(X)
 % Calibrate lognormal + prob mass in zero distribution parameters.
 %
 %   INPUT:
-%       X: full data (timetable)
-%       var_names: column we want to calibrate parameters of (array of
-%       string)
+%       X: full data 
+%
+%   OUTPUT: struct() containing:
 %
 %   The estimators are the closed-form univariate MLEs:
 %       p_i     = fraction of positive observations,
@@ -14,37 +14,31 @@ function [p, mu, sigma, var_names] = marginal_parameter_calibration(X, var_names
 
 %% Basic input check
 
-if nargin < 2
-    var_names = ["Building", "Contents", "Profits"];
-end
-
 if isempty(X)
     error('Input data X cannot be empty.');
 end
 
-if ~istimetable(X)
-    error('Input X must be a timetable.');
-end
-
-X = timetable2table(X);
-
-
 %% Core
-X_num = X{:, cellstr(var_names)};
 
-d = size(X_num, 2);
-p = mean(X_num > 0, 1);
+d = size(X, 2);
+p = mean(X > 0, 1);
 mu = zeros(1, d);
 sigma = zeros(1, d);
 
 for i = 1:d
 
-    positive_obs = X_num(X_num(:, i) > 0, i);
+    positive_obs = X(X(:, i) > 0, i);
     log_positive_obs = log(positive_obs);
 
     mu(i) = mean(log_positive_obs);
     sigma(i) = sqrt(mean((log_positive_obs - mu(i)).^2));
 end
+
+marginal_params = struct();
+marginal_params.p = p;
+marginal_params.mu = mu;
+marginal_params.sigma=sigma;
+
 
 
 end

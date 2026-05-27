@@ -7,18 +7,27 @@ Contents = data.Contents(:);
 profits = data.Profits(:);
 
 X = [building Contents profits];
+%%
 
-[p, mu, sigma] = marginal_parameter_calibration(data);
+params = marginal_parameter_calibration(X);
 
-cdf = marginal_cdf(p,mu,sigma);
-U = cdf(X)
+cdf = marginal_cdf(params);
+U = cdf(X);
+
 Z = norminv(U);
-pdf = marginal_pdf(mu,sigma);
-psi = pdf(X);
 
 mask = X>0;
 
 [C,ia,ic] = unique(mask,'rows');
+
+%%
+rho = [0.761 0.667 0.789];
+num_comb = size(C,1);
+
+log_likelihood = log_likelihood_semiparametric_rho(mask,rho,...
+    Z,ia,ic,num_comb)
+
+%%
 
 rows = (2 == ic);
 X_zeros = X(rows,:);

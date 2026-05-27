@@ -18,7 +18,7 @@ N = size(X,1);
 
 %% Marginals parameters calibration
 
-[p, mu, sigma] = marginal_parameter_calibration(data);
+marginal_params = marginal_parameter_calibration(X);
 
 fprintf("\nMarginal cdf parameters:\n");
 for i = 1:length(mu)
@@ -30,14 +30,18 @@ fprintf("\n p1 = %.2f", p(1));
 fprintf("\n p2 = %.2f", p(2));
 fprintf("\n p3 = %.2f\n", p(3));
 
-%% Zero-mixed bla bla da fare
+%% Zero-mixed 
+zero_mixed_params = zero_mixed_first_calibration(X)
 
 %% Comb. Bernoulli
+
 fprintf("\nComb. Bernoulli\n");
 
-cdf_comb_bernoulli = marginal_cdf(p,mu,sigma);
+comb_bern_params = marginal_params;
+
+cdf_comb_bernoulli = marginal_cdf(comb_bern_params);
 U_CB = cdf_comb_bernoulli(X);
-[rho_CB,~] = calibrate_model(U_CB,p);
+[comb_bern_params.rho, ~] = calibrate_model(U_CB,p);
 
 R_CB = squareform(rho_CB) + eye(length(rho_CB));
 fprintf("\n Correlation matrix:\n");
@@ -133,4 +137,16 @@ plot_backtest(bw, exc, VaR, 'Rolling-window', 'TopK', 0);
 
 %%
 
+% Kupiec POF test (unconditional coverage)
+N  = size(backtest_window,1);
+x  = sum(exceptions{1}(:,2));        % eccezioni 99%
+p  = 0.01;
+pi_hat = x/N;
+LR_POF = -2*log( ((1-p)^(N-x) * p^x) / ((1-pi_hat)^(N-x) * pi_hat^x) );
+pval_POF = 1 - chi2cdf(LR_POF, 1);
+
+% Christoffersen independence test
+% (devi contare le transizioni 00, 01, 10, 11 nella serie di eccezioni)
+%%
+res = christoffersen_test(exceptions);
 
