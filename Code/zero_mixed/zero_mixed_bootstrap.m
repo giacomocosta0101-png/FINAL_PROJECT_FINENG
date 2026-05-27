@@ -10,31 +10,21 @@ addpath('utilities','ex_1');
 data = readDataset(filename);
 
 %% let's have fun
- % this is what perfection looks like
 
-zero_mixed = zero_mixed_first_calibration(data);
-
-%now the calibration is perfect, I need to simulate the whole dataset
-
-
-%simulate the whole dataset
+zero_mixed = zero_mixed_calibration(data, "full");
 
 B=1e3;
 N=height(data);
 zero_sim = zero_mixed_sim(zero_mixed, B, N);
 
-
-%Ok now we can calibrate again all parameters
-
-
 for b = 1:B
 
     X_b = zero_sim(:,:,b);
 
-    params_b = zero_mixed_full_calibration(X_b) ;
+    params_b = zero_mixed_calibration(X_b, "rho") ;
 
     boot_prob(b,:) = params_b.prob;
-    boot_rho(b,:)  = params_b.rho_vec;
+    boot_R(b,:)  = params_b.rho_cell;
 
 end
 
@@ -74,14 +64,14 @@ for j = 1:8
     x = boot_prob(:,j);
     x = x(~isnan(x));
 
-    prob_CI(:,j) = quantile(x, [alpha/28, 1-alpha/28]);
+    prob_CI(:,j) = quantile(x, [alpha/14, 1-alpha/14]);
 end
 
 for j = 1:6
     x = boot_rho(:,j);
     x = x(~isnan(x));
 
-    rho_CI(:,j) = quantile(x, [alpha/28, 1-alpha/28]);
+    rho_CI(:,j) = quantile(x, [alpha/12, 1-alpha/12]);
 end
 
 
@@ -90,5 +80,3 @@ prob_CI       % 2x8 confidence intervals
 
 rho_center    % 1x6 point estimates
 rho_CI        % 2x6 confidence intervals
-
-

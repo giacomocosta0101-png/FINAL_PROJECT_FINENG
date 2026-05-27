@@ -49,7 +49,8 @@ end
 
 %% Core simulation
 
-Z = mvnrnd(zeros(1,d), R, N);
+
+Z = randn(N, d) * chol(R);
 
 sim = exp(mu + sigma .* Z);
 

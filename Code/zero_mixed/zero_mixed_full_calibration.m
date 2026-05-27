@@ -79,13 +79,13 @@ for k = 1:8
     n = sum(mask);
 
     calibrated_params.prob(k) = n / N;
-    
+
 
     if numel(idx_active) >= 2
 
         if n >= 2
-        mu    = mean(log(X_active), 1);
-        sigma = sqrt(mean((log(X_active) - mu).^2, 1));   % MLE estimator
+            mu    = mean(log(X_active), 1);
+            sigma = sqrt(mean((log(X_active) - mu).^2, 1));   % MLE estimator
             rho = calibration_rho_zero_mixed(X_active, mu, sigma);
             %calibration_rho_zero_mixed returns a scalar in the case of
             % d=2
@@ -116,4 +116,3 @@ for k = 1:8
 end
 
 end
-

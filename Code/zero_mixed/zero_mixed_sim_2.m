@@ -1,4 +1,4 @@
-function sim = zero_mixed_sim(zero_mixed, B, N)
+function sim = zero_mixed_sim_2(zero_mixed, B, N)
 %
 % Simulates B replicas of an N x 3 dataset from the calibrated
 % zero-mixed model.
@@ -48,19 +48,12 @@ for b = 1:B
 
     X_b = zeros(N, d);
 
-    % Step 1: get active set 
-
-    U = rand(N, 1);
-    case_id = zeros(N, 1);
-
-    for k = 1:K
-        case_id(U <= cumprob(k) & case_id == 0) = k;
-    end
-
+    i = zero_mixed{1}.n;
     % Step 2: simulate basing on current state
     for k = 2:K   % k = 1 is no-jump, already zero
 
-        rows = find(case_id == k);
+        rows = (i+1) : (i+zero_mixed{k}.n);
+        i = i + zero_mixed{k}.n;
         n_k = numel(rows);
 
         if n_k == 0
@@ -81,7 +74,8 @@ for b = 1:B
         else
 
             % Gaussian copula with lognormal marginals
-            R = zero_mixed{k}.R;
+            R = zero_mixed{k}.rho;
+
             X_k = copula_sim(R, mu, sigma, n_k);
 
         end
@@ -95,5 +89,4 @@ for b = 1:B
 end
 
 end
-
 
