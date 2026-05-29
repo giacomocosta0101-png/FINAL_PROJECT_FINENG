@@ -41,8 +41,6 @@ function zero_mixed = zero_mixed_first_calibration(data)
 
 X = [data.Building, data.Contents, data.Profits];
 
-names = {'Building', 'Contents', 'Profits'};
-
 N = size(X, 1);
 
 B = X(:,1);

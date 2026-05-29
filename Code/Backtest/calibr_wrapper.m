@@ -1,4 +1,4 @@
-function calibrated_parameters = calibr_wrapper(data)
+function calibrated_parameters = calibr_wrapper(data,X)
 %ritorna cell di struct
 
 calibrated_parameters = cell(3,1);
@@ -11,8 +11,8 @@ calibrated_parameters{1} = zero_mixed;
 
 %% comb ber
 comb_ber = struct();
-[p, mu, sigma] = marginal_parameter_calibration(data);
-cdf_comb_bernoulli = marginal_cdf(p,mu,sigma);
+[p, mu, sigma] = marginal_parameter_calibration(X);
+cdf_comb_bernoulli = marginal_cdf(mu,sigma,p);
 
 X(:,1)= data.Building;
 X(:,2) = data.Contents;
@@ -46,7 +46,7 @@ end
 semi_par.p = p;
 semi_par.mu= mu;
 semi_par.sigma = sigma;
-semi_par.rho = rho_CB;
+semi_par.rho = rho_SP2;
 semi_par.X = X;
 
 

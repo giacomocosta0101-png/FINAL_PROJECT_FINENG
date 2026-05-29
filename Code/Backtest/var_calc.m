@@ -2,7 +2,12 @@ function VaR = var_calc(data,alpha,start_date,end_date,N)
 
 %% calibrazione
 data_new = data_split(data, start_date, end_date);
-calibrated_parameters = calibr_wrapper(data_new);
+building = data_new.Building(:);
+contents = data_new.Contents(:);
+profits = data_new.Profits(:);
+
+X_new = [building contents profits];
+calibrated_parameters = calibr_wrapper(data_new,X_new);
 
 % -> mette in output cell di struct con i parametri modello per modello
 

@@ -32,7 +32,7 @@ d = length(rho);
 %% Core
 Z_std= randn(N,d);
 
-R = squareform(rho)+eye(3);
+R = squareform(rho)+eye(length(mu));
 
 L = chol(R,'lower');
 Z_corr = L*Z_std';

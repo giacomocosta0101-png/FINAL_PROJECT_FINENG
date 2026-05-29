@@ -18,7 +18,7 @@ N = size(X,1);
 
 %% Marginals parameters calibration
 
-marginal_params = marginal_parameter_calibration(X);
+[p,mu,sigma]= marginal_parameter_calibration(X);
 
 fprintf("\nMarginal cdf parameters:\n");
 for i = 1:length(mu)
@@ -31,26 +31,25 @@ fprintf("\n p2 = %.2f", p(2));
 fprintf("\n p3 = %.2f\n", p(3));
 
 %% Zero-mixed 
-zero_mixed_params = zero_mixed_first_calibration(X)
+zero_mixed_params = zero_mixed_calibration(X,"full");
+
+fin = zero_mixed_bootstrap_fun(zero_mixed_params, B, N, 0.05);
 
 %% Comb. Bernoulli
 
 fprintf("\nComb. Bernoulli\n");
 
-comb_bern_params = marginal_params;
-
-cdf_comb_bernoulli = marginal_cdf(comb_bern_params);
+cdf_comb_bernoulli = marginal_cdf(mu,sigma,p);
 U_CB = cdf_comb_bernoulli(X);
-[comb_bern_params.rho, ~] = calibrate_model(U_CB,p);
+[rho_CB, ~, R_CB] = calibrate_model(U_CB,p);
 
-R_CB = squareform(rho_CB) + eye(length(rho_CB));
 fprintf("\n Correlation matrix:\n");
 disp(R_CB);
 %%
 fprintf(" Bootstrap:\n");
 rng default;
 model2 = 'Comb-Bernoulli';
-[rho_CI_CB, p_CI_CB] = bootstrap(rho_CB,p,mu,sigma,model2,N,B,alpha);
+[rho_CI_CB, p_CI_CB, rho_hat_CB, pi_hat_CB] = bootstrap(rho_CB,p,mu,sigma,model2,N,B,alpha);
 
 fprintf(" \n Confidence intervals:\n\n");
 fprintf("  Rho_12: [ %.3f , %.3f ]\n", rho_CI_CB(1,1), rho_CI_CB(1,2));
@@ -59,7 +58,10 @@ fprintf("  Rho_23: [ %.3f , %.3f ]\n", rho_CI_CB(3,1), rho_CI_CB(3,2));
 fprintf("\n  p1: [ %.3f , %.3f ]\n", p_CI_CB(1,1), p_CI_CB(1,2));
 fprintf("  p2: [ %.3f , %.3f ]\n", p_CI_CB(2,1), p_CI_CB(2,2));
 fprintf("  p3: [ %.3f , %.3f ]\n", p_CI_CB(3,1), p_CI_CB(3,2));
+%%
 
+plot_bootstrap_rho(rho_hat_CB, rho_CB, alpha);          % 3 pannelli pairwise
+% plot_bootstrap_rho_3d(rho_hat_CB, rho_CB, alpha);     % opzionale
 %% Semi-parametric - VEDI SOTTO VERSIONE IN UNA SOLA FUNZIONE
 fprintf("\nSemi-Parametric\n");
 
@@ -74,6 +76,20 @@ U_3 = cdf_semiparametric_3(X(:,3));
 
 U_SP = [U_1 U_2 U_3];
 [rho_SP,~] = calibrate_model(U_SP,p);
+
+%%
+scatter(sort(X(:,1)),sort(U_1))
+hold on
+scatter(sort(X(:,1)),sort(U_CB(:,1)))
+%%
+
+sorted = sort(X(:,1));
+S_emp = sort(U_1);
+S_LN = sort(U_CB(:,1));
+semilogx(sorted, S_emp, 'o', 'MarkerSize', 4, 'DisplayName','Empirica'); 
+hold on; grid on;
+semilogx(sorted, S_LN,  '-', 'LineWidth', 1.6, 'DisplayName','Lognormale');
+%%
 
 R_SP = squareform(rho_SP) + eye(length(rho_SP));
 fprintf("\n Correlation matrix:\n");
@@ -110,7 +126,7 @@ end
 % and the calibrating period
 start_date = datetime("01/01/1980");
 end_date = datetime("31/12/1983");
-N = 1000;
+N = 10000;
 alpha = [0.05 0.01];
 mode = 'Rolling-window';
 data_new = data_split(data,start_date,datetime("31/12/1990"));
@@ -139,7 +155,7 @@ plot_backtest(bw, exc, VaR, 'Rolling-window', 'TopK', 0);
 
 % Kupiec POF test (unconditional coverage)
 N  = size(backtest_window,1);
-x  = sum(exceptions{1}(:,2));        % eccezioni 99%
+x  = sum(exceptions{3}(:,2));        % eccezioni 99%
 p  = 0.01;
 pi_hat = x/N;
 LR_POF = -2*log( ((1-p)^(N-x) * p^x) / ((1-pi_hat)^(N-x) * pi_hat^x) );

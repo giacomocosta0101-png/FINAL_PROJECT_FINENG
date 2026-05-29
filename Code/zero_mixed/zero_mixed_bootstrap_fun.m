@@ -1,20 +1,5 @@
+function [prob_center, prob_CI, rho_center ,rho_CI ] = zero_mixed_bootstrap_fun(zero_mixed, B, N, alpha)
 
-clc; clear all;
-
-addpath("ex_1")
-addpath("zero_mixed")
-addpath("Copula_Simulation")
-
-filename = "danishmulti.csv";
-addpath('utilities','ex_1');
-data = readDataset(filename);
-
-%% let's have fun
-
-zero_mixed = zero_mixed_calibration(data, "full");
-
-B=1e3;
-N=height(data);
 zero_sim = zero_mixed_sim(zero_mixed, B, N);
 
 for b = 1:B
@@ -29,14 +14,7 @@ for b = 1:B
 end
 
 
-%% Printing
-
-alpha = 0.05;
-
-% Centers from original calibration
-
 prob_center = zeros(1, 8);
-
 for k = 1:8
     prob_center(k) = zero_mixed{k}.prob;
 end
@@ -50,7 +28,7 @@ rho_center(1) = zero_mixed{5}.R(1,2);   % Building-Contents bivariate
 rho_center(2) = zero_mixed{6}.R(1,2);   % Building-Profits bivariate
 rho_center(3) = zero_mixed{7}.R(1,2);   % Contents-Profits bivariate
 
-R3 = zero_mixed{8}.rho;
+R3 = zero_mixed{8}.R;
 rho_center(4) = R3(1,2);   % Building-Contents trivariate
 rho_center(5) = R3(1,3);   % Building-Profits trivariate
 rho_center(6) = R3(2,3);   % Contents-Profits trivariate
@@ -73,10 +51,3 @@ for j = 1:6
 
     rho_CI(:,j) = quantile(x, [alpha/12, 1-alpha/12]);
 end
-
-
-prob_center   % 1x8 point estimates
-prob_CI       % 2x8 confidence intervals
-
-rho_center    % 1x6 point estimates
-rho_CI        % 2x6 confidence intervals

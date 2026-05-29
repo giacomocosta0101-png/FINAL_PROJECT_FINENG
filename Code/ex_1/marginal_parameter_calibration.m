@@ -1,4 +1,4 @@
-function marginal_params = marginal_parameter_calibration(X)
+function [p,mu,sigma] = marginal_parameter_calibration(X)
 % Calibrate lognormal + prob mass in zero distribution parameters.
 %
 %   INPUT:
@@ -20,25 +20,13 @@ end
 
 %% Core
 
-d = size(X, 2);
 p = mean(X > 0, 1);
-mu = zeros(1, d);
-sigma = zeros(1, d);
 
-for i = 1:d
+Xpos = X;
+Xpos(X == 0) = NaN;
+logX = log(Xpos);
 
-    positive_obs = X(X(:, i) > 0, i);
-    log_positive_obs = log(positive_obs);
-
-    mu(i) = mean(log_positive_obs);
-    sigma(i) = sqrt(mean((log_positive_obs - mu(i)).^2));
-end
-
-marginal_params = struct();
-marginal_params.p = p;
-marginal_params.mu = mu;
-marginal_params.sigma=sigma;
-
-
+mu    = mean(logX, 1, 'omitnan');
+sigma = std(logX, 1, 1, 'omitnan');
 
 end

@@ -7,7 +7,7 @@ function X_new = semi_parametric_losses(rho, p, N, X)
         cdf = cumulative_cdf_semi_parametric(p(i), X(:,i));
         X_col = unique(X(:,i));
         U = cdf(X_col);
-        X_new(:,i) = interp1(U, X_col, U_sim(:,i), 'linear');
+        X_new(:,i) = interp1(U, X_col, U_sim(:,i), 'linear','extrap');
     end
    
 end
