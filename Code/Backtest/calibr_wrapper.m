@@ -34,23 +34,28 @@ calibrated_parameters{2} = comb_ber;
 
 semi_par = struct();
 
-cdf_semiparametric = cumulative_cdf_semi_parametric_vec(p,X);
-
+q_u  = 0.99;
+pts  = cell(1, size(X,2));
 U_SP = zeros(size(X));
+
 for i = 1:size(X,2)
-    U_SP(:,i) = cdf_semiparametric{i}(X(:,i));
+    X_pos  = X(X(:,i) > 0, i);
+    pts{i} = paretotails(X_pos, 0, q_u, 'ecdf');
+
+    % U totale con massa atomica in 0
+    Ui = zeros(size(X(:,i)));
+    pos = X(:,i) > 0;
+    Ui(~pos) = 1 - p(i);
+    Ui( pos) = (1 - p(i)) + p(i) .* cdf(pts{i}, X(pos,i));
+    U_SP(:,i) = Ui;
 end
 
 [rho_SP2,~] = calibrate_model(U_SP,p);
 
-semi_par.p = p;
-semi_par.mu= mu;
-semi_par.sigma = sigma;
-semi_par.rho = rho_CB;
-semi_par.X = X;
-
-
-calibrated_parameters{3} = semi_par; 
+semi_par.p   = p;
+semi_par.rho = rho_SP2;
+semi_par.pts = pts;       % salvi gli oggetti paretotails
+calibrated_parameters{3} = semi_par;
 
 
 end

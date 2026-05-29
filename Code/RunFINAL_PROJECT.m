@@ -1,7 +1,7 @@
 % Project 6: Copula calibration
 
 filename = "danishmulti.csv";
-addpath('utilities','ex_1','ex_2','ex_4');
+addpath('utilities','ex_1','ex_2','ex_4','prove');
 data = readDataset(filename);
 
 building = data.Building(:);
@@ -19,6 +19,8 @@ N = size(X,1);
 %% Marginals parameters calibration
 
 marginal_params = marginal_parameter_calibration(X);
+mu=marginal_params.mu
+p=marginal_params.p
 
 fprintf("\nMarginal cdf parameters:\n");
 for i = 1:length(mu)
@@ -150,3 +152,32 @@ pval_POF = 1 - chi2cdf(LR_POF, 1);
 %%
 res = christoffersen_test(exceptions);
 
+
+%% PROVA 
+
+pd = paretotails(X(:,2),0,0.999,'ecdf')
+
+x=linspace(10,40,10000);
+plot(x, pd.cdf(x))
+
+
+cdf_semiparametric = cumulative_cdf_semi_parametric_vec(p,X);
+
+U_prova = cdf_semiparametric{2}(x);
+hold on
+plot(x,U_prova)
+
+%%
+
+cdf = cumulative_cdf_semi_parametric_pareto(p, X);
+
+cdf_semiparametric = cumulative_cdf_semi_parametric_vec(p,X);
+
+x=linspace(-1,40,10000);
+
+U_vecchio = cdf_semiparametric{2}(x);
+U_nuovo = cdf{2}(x);
+
+plot(x,U_vecchio);
+hold on
+plot(x, U_nuovo)

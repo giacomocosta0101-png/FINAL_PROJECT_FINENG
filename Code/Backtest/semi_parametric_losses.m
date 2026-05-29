@@ -1,13 +1,14 @@
-function X_new = semi_parametric_losses(rho, p, N, X)
-
+function X_new = semi_parametric_losses(rho, p, N, pts)
     U_sim = semi_parametric_sim(rho, p, N);
-    X_new = zeros(N,size(X,2));
-    
-    for i = 1:size(X,2)
-        cdf = cumulative_cdf_semi_parametric(p(i), X(:,i));
-        X_col = unique(X(:,i));
-        U = cdf(X_col);
-        X_new(:,i) = interp1(U, X_col, U_sim(:,i), 'linear');
+    d     = numel(pts);
+    X_new = zeros(N, d);
+
+    for i = 1:d
+        u    = U_sim(:,i);
+        mass = u <= (1 - p(i));
+        v    = (u - (1 - p(i))) ./ p(i);
+        v    = min(max(v, 1e-12), 1 - 1e-12);
+        X_new(~mass, i) = icdf(pts{i}, v(~mass));
+        % gli `mass` restano 0 (init)
     end
-   
 end
