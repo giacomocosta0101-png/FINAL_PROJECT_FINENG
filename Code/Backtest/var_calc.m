@@ -7,7 +7,7 @@ contents = data_new.Contents(:);
 profits = data_new.Profits(:);
 
 X_new = [building contents profits];
-calibrated_parameters = calibr_wrapper(data_new,X_new);
+calibrated_parameters = calibr_wrapper(X_new);
 
 % -> mette in output cell di struct con i parametri modello per modello
 

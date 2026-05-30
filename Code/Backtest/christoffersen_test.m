@@ -7,7 +7,7 @@ function out = christoffersen_test(exceptions)
 %   exceptions: cell {1xM} di matrici Nx2 (col1 = 95%, col2 = 99%)
 %   out:        struct con conteggi, statistiche e p-value
 
-    levels    = [0.05, 0.01];
+    levels    = [0.05, 0.005];
     lvl_names = {'95%','99%'};
     M = numel(exceptions);
     out = struct();

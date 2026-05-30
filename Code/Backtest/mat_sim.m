@@ -6,7 +6,7 @@ function obj = mat_sim(calibrated_parameters, N)
 obj = cell(3, 1); % Initialize the output cell array
 
 
-X_zero_mixed = zero_mixed_sim(calibrated_parameters{1}, 1, N);
+X_zero_mixed = zero_mixed_sim(calibrated_parameters{1}, N,1);
 
 mu = calibrated_parameters{2}.mu;
 sigma =calibrated_parameters{2}.sigma;

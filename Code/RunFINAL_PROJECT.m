@@ -31,17 +31,31 @@ fprintf("\n p2 = %.2f", p(2));
 fprintf("\n p3 = %.2f\n", p(3));
 
 %% Zero-mixed 
-zero_mixed_params = zero_mixed_calibration(X,"full");
 
-fin = zero_mixed_bootstrap_fun(zero_mixed_params, B, N, 0.05);
+tic
+zero_mixed = zero_mixed_calibration(X);
+toc
+
+%%
+
+sims = zero_mixed_sim(zero_mixed, N, 10000);
+ci = zero_mixed_bootstrap(sims, zero_mixed, alpha);
+
+zero_mixed_print_ci_table(ci)
 
 %% Comb. Bernoulli
-
+tic
 fprintf("\nComb. Bernoulli\n");
-
 cdf_comb_bernoulli = marginal_cdf(mu,sigma,p);
 U_CB = cdf_comb_bernoulli(X);
 [rho_CB, ~, R_CB] = calibrate_model(U_CB,p);
+toc
+
+%%
+tic
+bench_comb_bern()
+toc
+%%
 
 fprintf("\n Correlation matrix:\n");
 disp(R_CB);
@@ -127,7 +141,7 @@ end
 start_date = datetime("01/01/1980");
 end_date = datetime("31/12/1983");
 N = 10000;
-alpha = [0.05 0.01];
+alpha = [0.05 0.005];
 mode = 'Rolling-window';
 data_new = data_split(data,start_date,datetime("31/12/1990"));
 
