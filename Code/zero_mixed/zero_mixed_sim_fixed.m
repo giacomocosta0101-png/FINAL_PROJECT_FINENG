@@ -12,18 +12,13 @@ function sim = zero_mixed_sim_fixed(zero_mixed, N, B)
 %   sim        : N x d x B array
 %
 
-if ~iscell(zero_mixed) || isempty(zero_mixed)
-    error('zero_mixed must be a non-empty cell array.');
+arguments
+    zero_mixed (1,:) cell {mustBeNonempty}
+    N (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
+    B (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
 end
 
-if ~isscalar(N) || N <= 0 || N ~= floor(N) || ...
-        ~isscalar(B) || B <= 0 || B ~= floor(B)
-    error('N and B must be positive integers.');
-end
-
-%% Input check and setup
-
-rng(762)
+%% Initial setup
 
 K = numel(zero_mixed);
 %trick to get the number of cols in the general case
@@ -96,8 +91,9 @@ function counts = fixed_case_counts(prob, N)
 % OUTPUT:
 %   counts : integer vector with sum(counts) = N
 
-if any(prob < 0) || ~isscalar(N) || N <= 0 || N ~= floor(N)
-    error('prob must be non-negative and N must be a positive integer.');
+arguments
+    prob (1,:) double {mustBeNonempty, mustBeReal, mustBeFinite, mustBeGreaterThanOrEqual(prob, 0)}
+    N (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
 end
 
 expected = N * prob;

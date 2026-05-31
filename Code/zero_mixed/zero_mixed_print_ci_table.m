@@ -11,18 +11,15 @@ function zero_mixed_print_ci_table(ci, alpha)
 %   This function does not return values. It prints the table to the
 %   command window.
 
-if ~iscell(ci) && ~isstruct(ci)
-    error('ci must be a struct or a cell array of structs.');
-end
-
-if nargin >= 2 && (~isscalar(alpha) || alpha <= 0 || alpha >= 1)
-    error('alpha must be a scalar strictly between 0 and 1.');
+arguments
+    ci {mustBePrintCIInput}
+    alpha {mustBeOptionalAlpha} = []
 end
 
 %% Select the right struct
 
 if iscell(ci)
-    if nargin < 2
+    if isempty(alpha)
         ci = ci{1};
     else
         idx = [];
@@ -61,6 +58,26 @@ fprintf('%s\n', repmat('-', 1, 58));
 for i = 1:numel(ci.rho_labels)
     fprintf('%-18s %12.3f %12.3f %12.3f\n', ...
         ci.rho_labels{i}, ci.rho_center(i), ci.rho_CI(1,i), ci.rho_CI(2,i));
+end
+
+end
+
+function mustBePrintCIInput(x)
+
+if ~iscell(x) && ~isstruct(x)
+    error('ci must be a struct or a cell array of structs.');
+end
+
+end
+
+function mustBeOptionalAlpha(x)
+
+if isempty(x)
+    return
+end
+
+if ~isscalar(x) || ~isnumeric(x) || ~isreal(x) || ~isfinite(x) || x <= 0 || x >= 1
+    error('alpha must be a scalar strictly between 0 and 1.');
 end
 
 end

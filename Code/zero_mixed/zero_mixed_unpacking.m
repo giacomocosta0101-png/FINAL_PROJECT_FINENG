@@ -18,8 +18,8 @@ function [rho_vec, prob_vec, rho_labels, prob_labels] = zero_mixed_unpacking(zer
 %   - Cases with fewer than two active components do not contribute to
 %     rho_vec
 
-if ~iscell(zero_mixed) || isempty(zero_mixed)
-    error('zero_mixed must be a non-empty cell array.');
+arguments
+    zero_mixed (1,:) cell {mustBeNonempty}
 end
 
 cases = numel(zero_mixed);

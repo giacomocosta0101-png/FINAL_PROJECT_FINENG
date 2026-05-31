@@ -18,27 +18,17 @@ function R = calibration_rho_zero_mixed(X, mu, sigma)
 %   Y_ij = (log(X_ij) - mu_j) / sigma_j
 %   R_hat = (Y' * Y) / N
 
-%% Input check
+arguments
+    X (:,:) double {mustBeNonempty, mustBeReal, mustBeFinite, mustBePositive}
+    mu double {mustBeNonempty, mustBeReal, mustBeFinite, mustBeVector}
+    sigma double {mustBeNonempty, mustBeReal, mustBeFinite, mustBeVector, mustBePositive}
+end
 
+%% Initial setup
 [N, d] = size(X);
-if d <2
-    error('X must have at least 2 columns');
-end
-
-if any(X <= 0, 'all')
-    error('X must contain only positive observations.');
-end
 
 mu = mu(:)';
 sigma = sigma(:)';
-
-if numel(mu) ~= d || numel(sigma) ~= d
-    error('mu and sigma must have one entry per column of X.');
-end
-
-if any(sigma <= 0)
-    error('All sigma values must be strictly positive.');
-end
 
 
 %% Compute the estimator 

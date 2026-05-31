@@ -17,60 +17,45 @@ function zero_mixed = zero_mixed_calibration(X)
 %   .R         : Gaussian copula correlation matrix for the active set,
 %                when at least two coordinates are active
 
-if ~isnumeric(X) || ~ismatrix(X)
-    error('X must be a numeric matrix.');
+arguments
+    X (:,:) double {mustBeNonempty, mustBeReal, mustBeFinite, mustBeGreaterThanOrEqual(X, 0)}
 end
 
-if any(X < 0, 'all')
-    error('X must contain only non-negative observations.');
+%% Initial setup
+d = size(X, 2);
+
+if d <= 1
+    error('X must have at least two columns.');
 end
 
-%%Input check
-[N,d] = size(X);
-
-%% Get active sets and mask
-
-active_sets = get_active_sets(d);
-cases = numel(active_sets);
-
-masks = cell(1, cases);
-
-for s = 1:cases
-
-    active = active_sets{s};
-    inactive = setdiff(1:d, active);
-
-    mask_active = all(X(:, active) > 0, 2);
-    mask_inactive = all(X(:, inactive) == 0, 2);
-
-    masks{s} = mask_active & mask_inactive;
-
-end
+case_data = zero_mixed_case_data(X);
+N = case_data.N;
+cases = case_data.cases;
 
 
 %% Calibration loop
 
-zero_mixed = cell(1,numel(active_sets));
+zero_mixed = cell(1, cases);
 
 for k = 1:cases
 
-    idx_active = active_sets{k};
-    mask = masks{k};
-
-    X_case = X(mask, :);
-    X_active = X_case(:, idx_active);
+    entry = case_data.entries(k);
+    idx_active = entry.idx_active;
+    rows = entry.rows;
+    X_active = [];
 
     out = struct();
 
-    out.n    = sum(mask);
+    out.n    = entry.n;
     out.idx_active = idx_active;
-    out.prob = out.n / N;
-    
+    out.prob = entry.prob;
+
     out.mu    = [];
     out.sigma = [];
     out.R     = [];
 
     if ~isempty(idx_active) && out.n > 0
+        X_active = X(rows, idx_active);
 
         logX = log(X_active);
 

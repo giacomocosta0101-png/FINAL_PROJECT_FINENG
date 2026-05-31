@@ -9,8 +9,8 @@ function active_sets = get_active_sets(d)
 %   active_sets : 1 x 2^d cell array containing all active sets, ordered
 %                 by cardinality from the empty set to the full set
 
-if ~isscalar(d) || d <= 0 || d ~= floor(d)
-    error('d must be a positive integer.');
+arguments
+    d (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
 end
 
 active_sets = {[]};

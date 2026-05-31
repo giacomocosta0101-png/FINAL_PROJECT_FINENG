@@ -1,13 +1,13 @@
-function ci = zero_mixed_bootstrap_fixed(sims, zero_mixed, alpha)
+function ci = zero_mixed_bootstrap_fixed(zero_mixed, alpha, N, B)
 %
-% Computes bootstrap confidence intervals for the zero-mixed model when
-% the simulated replicas keep a fixed number of appearances in each
-% active set.
+% Bootstraps active-set probabilities from simulated case assignments and
+% recalibrates rho from one fixed-count simulated replica at a time.
 %
 % INPUT:
-%   sims       : N x d x B array of simulated replicas
 %   zero_mixed : output of zero_mixed_calibration
 %   alpha      : scalar or vector of significance levels
+%   N          : number of observations per bootstrap replica
+%   B          : number of bootstrap replicas
 %
 % OUTPUT:
 %   ci         : 1 x numel(alpha) cell array of structs
@@ -23,23 +23,17 @@ function ci = zero_mixed_bootstrap_fixed(sims, zero_mixed, alpha)
 %   .rho_labels   : labels matching rho_center and rho_CI
 %   .prob_labels  : labels matching prob_center and prob_CI
 
-%% Input check
-
-if ndims(sims) ~= 3
-    error('sims must be a N x d x B array.');
+arguments
+    zero_mixed (1,:) cell {mustBeNonempty}
+    alpha double {mustBeNonempty, mustBeReal, mustBeFinite, mustBeVector, ...
+                  mustBeGreaterThan(alpha, 0), mustBeLessThan(alpha, 1)}
+    N (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
+    B (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
 end
 
-if ~iscell(zero_mixed) || isempty(zero_mixed)
-    error('zero_mixed must be a non-empty cell array.');
-end
-
+%% Initial setup
 alpha = alpha(:).';
 
-if any(alpha <= 0) || any(alpha >= 1)
-    error('alpha must contain values strictly between 0 and 1.');
-end
-
-[N, ~, B] = size(sims);
 
 %% Different workflow
 %First bootstrap p without simulation
@@ -53,18 +47,14 @@ n_prob = numel(prob_center);
 
 %% prob bootstrap without sims
 
-
 K = numel(prob_center);
-prob_center = prob_center / sum(prob_center);
-cumprob = cumsum(prob_center);
+prob_boot = prob_center / sum(prob_center);
+cumprob = cumsum(prob_boot);
 cumprob(end) = 1;
-
 
 prob_mat = NaN(B, n_prob);
 
-rng(762);
-
-for b=1:B
+for b = 1:B
 
     U = rand(N, 1);
     case_id = zeros(N, 1);
@@ -85,8 +75,8 @@ end
 rho_mat = NaN(B, n_rho);
 
 
-for b = 1:B
-    X_b = sims(:,:,b);
+parfor b = 1:B
+    X_b = zero_mixed_sim_fixed(zero_mixed, N, 1);
     zero_mixed_b = zero_mixed_calibration(X_b);
     [rho_mat(b,:),~] = zero_mixed_unpacking(zero_mixed_b);
 end

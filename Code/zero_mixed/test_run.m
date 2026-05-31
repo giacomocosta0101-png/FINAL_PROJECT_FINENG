@@ -1,6 +1,6 @@
 
 %per prima cosa runna il primo blocco di run per avere X
-%poi spostati nella cartella zero_mixed_def per runnare
+%poi spostati nella cartella zero_mixed per runnare
 
 %% se vuoi verificare che effettivamente sia generico
 
@@ -22,8 +22,7 @@ N = height(data);
 B = 10000;
 alpha = 0.05;
 
-sims = zero_mixed_sim(zero_mixed, N, B);
-ci = zero_mixed_bootstrap(sims, zero_mixed, alpha);
+ci = zero_mixed_bootstrap(zero_mixed, alpha, N, B);
 
 zero_mixed_print_ci_table(ci)
 
@@ -36,7 +35,6 @@ N = height(data);
 B = 10000;
 alpha = 0.05;
 
-sims = zero_mixed_sim_fixed(zero_mixed, N, B);
-ci = zero_mixed_bootstrap_fixed(sims, zero_mixed, alpha);
+ci = zero_mixed_bootstrap_fixed(zero_mixed, alpha, N, B);
 
 zero_mixed_print_ci_table(ci)

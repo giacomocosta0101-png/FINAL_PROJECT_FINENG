@@ -1,7 +1,7 @@
 % Project 6: Copula calibration
 
 filename = "danishmulti.csv";
-addpath('utilities','ex_1','ex_2','ex_4');
+addpath('utilities','ex_1','ex_2','ex_4','zero_mixed','Backtest','prove');
 data = readDataset(filename);
 
 building = data.Building(:);
@@ -14,6 +14,7 @@ X = [building contents profits];
 
 alpha = 0.05;
 B = 1e3;
+B_zero_mixed = 10000;
 N = size(X,1);
 
 %% Marginals parameters calibration
@@ -30,18 +31,27 @@ fprintf("\n p1 = %.2f", p(1));
 fprintf("\n p2 = %.2f", p(2));
 fprintf("\n p3 = %.2f\n", p(3));
 
-%% Zero-mixed 
+%% Zero-mixed calibration
 
 tic
 zero_mixed = zero_mixed_calibration(X);
 toc
 
-%%
+%% Zero-mixed bootstrap
 
-sims = zero_mixed_sim(zero_mixed, N, 10000);
-ci = zero_mixed_bootstrap(sims, zero_mixed, alpha);
+fprintf("\nZero-mixed bootstrap\n");
+rng(762);
+ci_zero_mixed = zero_mixed_bootstrap(zero_mixed, alpha, N, B_zero_mixed);
 
-zero_mixed_print_ci_table(ci)
+zero_mixed_print_ci_table(ci_zero_mixed)
+
+%% Zero-mixed bootstrap fixed active-set counts
+
+fprintf("\nZero-mixed bootstrap with fixed active-set counts\n");
+rng(762);
+ci_zero_mixed_fixed = zero_mixed_bootstrap_fixed(zero_mixed, alpha, N, B_zero_mixed);
+
+zero_mixed_print_ci_table(ci_zero_mixed_fixed)
 
 %% Comb. Bernoulli
 tic
@@ -62,7 +72,7 @@ disp(R_CB);
 
 %%
 fprintf(" Bootstrap:\n");
-rng default;
+rng(762);
 model2 = 'Comb-Bernoulli';
 [rho_CI_CB, p_CI_CB, rho_hat_CB, pi_hat_CB] = bootstrap(rho_CB,p,mu,sigma,model2,N,B,alpha);
 
@@ -111,7 +121,7 @@ fprintf("\n Correlation matrix:\n");
 disp(R_SP);
 %%
 fprintf(" Bootstrap:\n");
-rng default;
+rng(762);
 model3 = 'Semi-parametric';
 [rho_CI_SP, p_CI_SP]= bootstrap(rho_SP,p,mu,sigma,model3,N,B,alpha);
 

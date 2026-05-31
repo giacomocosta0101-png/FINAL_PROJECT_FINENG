@@ -12,18 +12,13 @@ function sim = zero_mixed_sim(zero_mixed, N, B)
 %                sim(:,:,b) is the b-th simulated dataset
 %
 
-if ~iscell(zero_mixed) || isempty(zero_mixed)
-    error('zero_mixed must be a non-empty cell array.');
+arguments
+    zero_mixed (1,:) cell {mustBeNonempty}
+    N (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
+    B (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
 end
 
-if ~isscalar(N) || N <= 0 || N ~= floor(N) || ...
-        ~isscalar(B) || B <= 0 || B ~= floor(B)
-    error('N and B must be positive integers.');
-end
-
-%%Input check and some initial work
-
-rng(762)
+%% Initial setup
 
 K = numel(zero_mixed);
 %trick to get the number of cols in the general case
@@ -35,10 +30,6 @@ for k = 1:K
 end
 
 cumprob = cumsum(prob);
-
-if (cumprob(end) > (1+1e-4)) || (cumprob(end) < (1-1e-4))
-    error("Something off with cases probability")
-end
 
 sim = zeros(N, d, B);
 
