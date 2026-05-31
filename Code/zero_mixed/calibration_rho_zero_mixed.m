@@ -1,18 +1,18 @@
 function R = calibration_rho_zero_mixed(X, mu, sigma)
 %
-% Calibrates the Gaussian copula correlation parameter for lognormal
-% positive marginals in the zero-mixed model.
+% Calibrates the Gaussian copula correlation matrix for the positive
+% marginals of a zero-mixed model.
 %
-% Inputs:
+% INPUT:
 %   X      : N x d matrix of strictly positive observations
 %   mu     : 1 x d vector of fitted lognormal location parameters
 %   sigma  : 1 x d vector of fitted lognormal scale parameters
 %
-% Output:
-%   R      : if d = 2, 2x2 correlation matrix
-%            if d = 3, 3 x 3 correlation matrix
+% OUTPUT:
+%   R      : d x d Gaussian copula correlation matrix
 %
-% Note: if N<=d return the identiy matrix
+% Note:
+%   If N <= d, the function returns the identity matrix.
 %
 % The estimator is:
 %   Y_ij = (log(X_ij) - mu_j) / sigma_j
@@ -21,6 +21,9 @@ function R = calibration_rho_zero_mixed(X, mu, sigma)
 %% Input check
 
 [N, d] = size(X);
+if d <2
+    error('X must have at least 2 columns');
+end
 
 if any(X <= 0, 'all')
     error('X must contain only positive observations.');

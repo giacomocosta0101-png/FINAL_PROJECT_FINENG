@@ -59,6 +59,7 @@ toc
 
 fprintf("\n Correlation matrix:\n");
 disp(R_CB);
+
 %%
 fprintf(" Bootstrap:\n");
 rng default;
@@ -179,4 +180,3 @@ pval_POF = 1 - chi2cdf(LR_POF, 1);
 % (devi contare le transizioni 00, 01, 10, 11 nella serie di eccezioni)
 %%
 res = christoffersen_test(exceptions);
-
