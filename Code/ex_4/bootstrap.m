@@ -58,7 +58,7 @@ alpha_correct = alpha / m;
 
 t0 = tic;
 
-parfor i = 1:B
+for i = 1:B
 
     replica = generate_replica(rho);
 

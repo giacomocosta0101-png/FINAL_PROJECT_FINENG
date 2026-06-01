@@ -1,7 +1,7 @@
 % Project 6: Copula calibration
 
 filename = "danishmulti.csv";
-addpath('utilities','ex_1','ex_2','ex_4','zero_mixed','Backtest','prove');
+addpath('utilities','ex_1','ex_2','ex_4','zero_mixed','Backtest','prove', "zero_mixed");
 data = readDataset(filename);
 
 building = data.Building(:);
@@ -32,27 +32,26 @@ fprintf("\n p3 = %.2f\n", p(3));
 
 %% Zero-mixed calibration
 
-tic
 zero_mixed = zero_mixed_calibration(X);
-toc
 
 %% Zero-mixed bootstrap
 
-tic
+
+fprintf("\nZero-mixed bootstrap\n");
 fprintf("\nZero-mixed bootstrap\n");
 rng(762);
 ci_zero_mixed = zero_mixed_bootstrap(zero_mixed, alpha, N, B);
 
-toc
+
 
 zero_mixed_print_ci_table(ci_zero_mixed)
 
 %% Zero-mixed bootstrap fixed active-set counts
-tic
+
 fprintf("\nZero-mixed bootstrap with fixed active-set counts\n");
 rng(762);
 ci_zero_mixed_fixed = zero_mixed_bootstrap_fixed(zero_mixed, alpha, N, B);
-toc
+
 
 zero_mixed_print_ci_table(ci_zero_mixed_fixed)
 
