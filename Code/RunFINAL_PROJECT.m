@@ -13,8 +13,7 @@ X = [building contents profits];
 %% General parameters
 
 alpha = 0.05;
-B = 1e3;
-B_zero_mixed = 10000;
+B = 1e4;
 N = size(X,1);
 
 %% Marginals parameters calibration
@@ -39,17 +38,21 @@ toc
 
 %% Zero-mixed bootstrap
 
+tic
 fprintf("\nZero-mixed bootstrap\n");
 rng(762);
-ci_zero_mixed = zero_mixed_bootstrap(zero_mixed, alpha, N, B_zero_mixed);
+ci_zero_mixed = zero_mixed_bootstrap(zero_mixed, alpha, N, B);
+
+toc
 
 zero_mixed_print_ci_table(ci_zero_mixed)
 
 %% Zero-mixed bootstrap fixed active-set counts
-
+tic
 fprintf("\nZero-mixed bootstrap with fixed active-set counts\n");
 rng(762);
-ci_zero_mixed_fixed = zero_mixed_bootstrap_fixed(zero_mixed, alpha, N, B_zero_mixed);
+ci_zero_mixed_fixed = zero_mixed_bootstrap_fixed(zero_mixed, alpha, N, B);
+toc
 
 zero_mixed_print_ci_table(ci_zero_mixed_fixed)
 
