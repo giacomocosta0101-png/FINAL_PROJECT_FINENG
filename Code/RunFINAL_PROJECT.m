@@ -1,7 +1,8 @@
 % Project 6: Copula calibration
 
 filename = "danishmulti.csv";
-addpath('utilities','ex_1','ex_2','ex_4','zero_mixed','Backtest','prove', "zero_mixed");
+%addpath('utilities','ex_1','ex_2','ex_4','zero_mixed','Backtest','prove');
+
 data = readDataset(filename);
 
 building = data.Building(:);
@@ -37,12 +38,10 @@ zero_mixed = zero_mixed_calibration(X);
 %% Zero-mixed bootstrap
 
 
-fprintf("\nZero-mixed bootstrap\n");
+fprintf("\nZero-mixed bootstrap with  %.0f replicas; alpha = %.3f\n", B, alpha);
 fprintf("\nZero-mixed bootstrap\n");
 rng(762);
 ci_zero_mixed = zero_mixed_bootstrap(zero_mixed, alpha, N, B);
-
-
 
 zero_mixed_print_ci_table(ci_zero_mixed)
 
@@ -64,9 +63,11 @@ U_CB = cdf_comb_bernoulli(X);
 toc
 
 %%
+
 tic
 bench_comb_bern()
 toc
+
 %%
 
 fprintf("\n Correlation matrix:\n");
@@ -76,7 +77,7 @@ disp(R_CB);
 fprintf(" Bootstrap:\n");
 rng(762);
 model2 = 'Comb-Bernoulli';
-[rho_CI_CB, p_CI_CB, rho_hat_CB, pi_hat_CB] = bootstrap(rho_CB,p,mu,sigma,model2,N,B,alpha);
+[rho_CI_CB, p_CI_CB, rho_hat_CB, pi_hat_CB] = bootstrap(rho_CB,p,mu,sigma,model2,N,100,alpha);
 
 fprintf(" \n Confidence intervals:\n\n");
 fprintf("  Rho_12: [ %.3f , %.3f ]\n", rho_CI_CB(1,1), rho_CI_CB(1,2));
@@ -155,7 +156,7 @@ start_date = datetime("01/01/1980");
 end_date = datetime("31/12/1983");
 N = 10000;
 alpha = [0.05 0.005];
-mode = 'Rolling-window';
+mode = 'Fixed';
 data_new = data_split(data,start_date,datetime("31/12/1990"));
 
 tic

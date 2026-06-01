@@ -41,8 +41,6 @@ end
 %% Print
 
 fprintf('\n');
-fprintf('Zero-mixed bootstrap confidence intervals\n');
-fprintf('alpha = %.4f\n', ci.alpha);
 
 fprintf('\nProbabilities\n');
 fprintf('%-18s %12s %12s %12s\n', 'Parameter', 'Estimate', 'Lower', 'Upper');
