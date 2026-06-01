@@ -1,7 +1,7 @@
 % Project 6: Copula calibration
 
 filename = "danishmulti.csv";
-%addpath('utilities','ex_1','ex_2','ex_4','zero_mixed','Backtest','prove');
+addpath('utilities','Comb_and_Semi\','zero_mixed\','Backtest');
 
 data = readDataset(filename);
 
@@ -105,7 +105,8 @@ disp(R_SP);
 fprintf(" Bootstrap:\n");
 rng(762);
 model3 = 'Semi-parametric';
-[rho_CI_SP, p_CI_SP]= bootstrap(rho_SP,p,mu,sigma,model3,N,B,alpha);
+
+[rho_CI_SP, p_CI_SP]= bootstrap(rho_SP,p,mu,sigma,model3,N,1000,alpha);
 
 fprintf(" \n Confidence intervals:\n\n");
 fprintf("  Rho_12: [ %.3f , %.3f ]\n", rho_CI_SP(1,1), rho_CI_SP(1,2));
@@ -116,25 +117,14 @@ fprintf("  p2: [ %.3f , %.3f ]\n", p_CI_SP(2,1), p_CI_SP(2,2));
 fprintf("  p3: [ %.3f , %.3f ]\n", p_CI_SP(3,1), p_CI_SP(3,2));
 
 
-%% SEMI-PARAMETRIC IN UNA SOLA FUNZIONE
-
-cdf_semiparametric = cumulative_cdf_semi_parametric_vec(p,X);
-
-U_SP = zeros(size(X));
-for i = 1:size(X,2)
-    U_SP(:,i) = cdf_semiparametric{i}(X(:,i));
-end
-
-[rho_SP2,~] = calibrate_model(U_SP,p);
-
 %% Backtest
 
 %calibrating function has as input data (full, timetable)
 % and the calibrating period
 start_date = datetime("01/01/1980");
 end_date = datetime("31/12/1983");
-N = 100;
-alpha = [0.05 0.005];
+N = size(X,1);
+alpha = [0.05 0.01];
 mode = 'Rolling-window';
 data_new = data_split(data,start_date,datetime("31/12/1990"));
 

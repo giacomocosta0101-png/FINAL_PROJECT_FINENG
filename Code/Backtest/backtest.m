@@ -16,6 +16,8 @@ elseif strcmp(mode,'Rolling-window')
     VaR = zeros(3,2,size(backtest_window,1));
     exceptions = cell(1,3);
 
+    t0 = tic;
+
     for i = 1:size(backtest_window,1)
         start_date = data.Date(i);
         end_date = data.Date(j);
@@ -26,6 +28,14 @@ elseif strcmp(mode,'Rolling-window')
         for k= 1:3
             exceptions{k}(i,:) = (backtest_window.Total(i) > VaR(k,:,i));
         end
+
+        if mod(i, 50) == 0 || i == size(backtest_window,1)   % Prints every 50 iterations
+            elapsed = toc(t0);
+            eta = elapsed / i * (size(backtest_window,1) - i);
+            fprintf('Day %4d/%d | elapsed %6.1fs | ETA %6.1fs\n', ...
+                i, size(backtest_window,1), elapsed, eta);
+        end
+    end
 
     end
 end

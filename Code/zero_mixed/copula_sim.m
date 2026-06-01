@@ -11,10 +11,11 @@ function sim = copula_sim(R, mu, sigma, N)
 % OUTPUT:
 %   sim    : N x d matrix of simulated observations
 
+
 arguments
     R (:,:) double {mustBeNonempty, mustBeReal, mustBeFinite}
     mu double {mustBeNonempty, mustBeReal, mustBeFinite, mustBeVector}
-    sigma double {mustBeNonempty, mustBeReal, mustBeFinite, mustBeVector, mustBePositive}
+    sigma double {mustBeNonempty, mustBeReal, mustBeFinite, mustBeVector, mustBeNonnegative}
     N (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
 end
 
