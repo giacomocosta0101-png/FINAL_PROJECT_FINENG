@@ -1,23 +1,25 @@
-function VaR = var_calc(data,alpha,start_date,end_date,N)
+function VaR = var_calc(data,alpha,window_start,...
+    window_end,N)
 
-%% calibrazione
-data_new = data_split(data, start_date, end_date);
+%% Calibration
+data_new = data_split(data, window_start, ...
+    window_end);
 building = data_new.Building(:);
 contents = data_new.Contents(:);
 profits = data_new.Profits(:);
 
 X_new = [building contents profits];
+
+% Pass the calibration window to a wrapper:
+
 calibrated_parameters = calibr_wrapper(X_new);
 
-% -> mette in output cell di struct con i parametri modello per modello
+%% Simulation
 
-
-%% sim
-%simulazione prende in input la cell di struct di parametri calibrati
-
-% -> mette in output una cell 3x1, in ciascuna cell una matrice Nx3
-
-
+% mat_sim takes the 3x1 cell of calibrated-parameter structs and returns a
+% 3x1 cell (one entry per model). Each entry is an N x 1 vector of simulated
+% TOTAL losses: mat_sim already sums the 3 risk components (Building,
+% Contents, Profits) internally.
 sim_losses = mat_sim(calibrated_parameters, N);
 
 VaR = zeros(length(sim_losses),length(alpha));

@@ -1,7 +1,7 @@
 % Project 6: Copula calibration
 
 filename = "danishmulti.csv";
-addpath('utilities','Comb_and_Semi\','zero_mixed\','Backtest');
+addpath('utilities','Comb_and_Semi','zero_mixed','Backtest');
 
 data = readDataset(filename);
 
@@ -61,8 +61,6 @@ U_CB = cdf_comb_bernoulli(X);
 [rho_CB, ~, R_CB] = calibrate_model(U_CB,p);
 toc
 
-%%
-
 fprintf("\n Correlation matrix:\n");
 disp(R_CB);
 
@@ -84,18 +82,16 @@ fprintf("  p3: [ %.3f , %.3f ]\n", p_CI_CB(3,1), p_CI_CB(3,2));
 plot_bootstrap_rho(rho_hat_CB, rho_CB, alpha);          % 3 pannelli pairwise
 % plot_bootstrap_rho_3d(rho_hat_CB, rho_CB, alpha);     % opzionale
 %% Semi-parametric 
-
 fprintf("\nSemi-Parametric\n");
 
 cdf_semiparametric = cumulative_cdf_semi_parametric_vec(p,X);
-
 U_SP = zeros(size(X));
+
 for i = 1:size(X,2)
     U_SP(:,i) = cdf_semiparametric{i}(X(:,i));
 end
 
 [rho_SP,~] = calibrate_model(U_SP,p);
-
 %%
 
 R_SP = squareform(rho_SP) + eye(length(rho_SP));
@@ -116,49 +112,34 @@ fprintf("\n  p1: [ %.3f , %.3f ]\n", p_CI_SP(1,1), p_CI_SP(1,2));
 fprintf("  p2: [ %.3f , %.3f ]\n", p_CI_SP(2,1), p_CI_SP(2,2));
 fprintf("  p3: [ %.3f , %.3f ]\n", p_CI_SP(3,1), p_CI_SP(3,2));
 
+%% 4.BACKTEST
+%% General parameters
 
-%% Backtest
+training_window_start_date= datetime("01/01/1980");
+training_window_end_date = datetime("31/12/1983");
 
-%calibrating function has as input data (full, timetable)
-% and the calibrating period
-start_date = datetime("01/01/1980");
-end_date = datetime("31/12/1983");
 N = size(X,1);
 alpha = [0.05 0.01];
-mode = 'Rolling-window';
-data_new = data_split(data,start_date,datetime("31/12/1990"));
 
-tic
-[backtest_window,exceptions,VaR] = backtest(data_new,alpha,start_date,end_date,N,mode);
-toc
-%%
-bw = backtest_window;
-exc = exceptions;
-%%
-% default: 5 eccezioni 99% più gravi annotate
-plot_backtest(bw, exc, VaR, 'Rolling-window', ...
+%% a. Static calibration
+
+mode = 'Fixed';
+[backtest_window,exc_static_calibration,VaR_static_calibration] = backtest(data,alpha,...
+    training_window_start_date,training_window_end_date,N,mode);
+
+plot_backtest(backtest_window, exc_static_calibration,...
+    VaR_static_calibration, 'Static calibration', ...
               'ModelNames', {'Zero_mixed','CB','Semi_par'});
-%%
+%% b. Rolling-window calibration
 
-% se vuoi più dettaglio sulle eccezioni
-plot_backtest(bw, exc, VaR, 'Rolling-window', 'TopK', 10);
+mode = 'Rolling-window';
+[~,exc_rolling_window,VaR_rolling_window] = backtest(data,alpha,...
+    training_window_start_date,training_window_end_date,N,mode);
 
-%%
+plot_backtest(backtest_window, exc_rolling_window,...
+    VaR_rolling_window, 'Rolling-window', ...
+              'ModelNames', {'Zero_mixed','CB','Semi_par'});
+%% Chrisoffersen test:
 
-% zero annotazioni: solo marker colorati
-plot_backtest(bw, exc, VaR, 'Rolling-window', 'TopK', 0);
-
-%%
-
-% Kupiec POF test (unconditional coverage)
-N  = size(backtest_window,1);
-x  = sum(exceptions{3}(:,2));        % eccezioni 99%
-p  = 0.01;
-pi_hat = x/N;
-LR_POF = -2*log( ((1-p)^(N-x) * p^x) / ((1-pi_hat)^(N-x) * pi_hat^x) );
-pval_POF = 1 - chi2cdf(LR_POF, 1);
-
-% Christoffersen independence test
-% (devi contare le transizioni 00, 01, 10, 11 nella serie di eccezioni)
-%%
-res = christoffersen_test(exceptions);
+res_static = christoffersen_test(exc_static_calibration);
+res_rolling = christoffersen_test(exc_rolling_window);
