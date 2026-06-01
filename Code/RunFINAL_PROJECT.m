@@ -14,7 +14,7 @@ X = [building contents profits];
 %% General parameters
 
 alpha = 0.05;
-B = 1e4;
+B = 1e3;
 N = size(X,1);
 
 %% Marginals parameters calibration
@@ -36,7 +36,6 @@ fprintf("\n p3 = %.2f\n", p(3));
 zero_mixed = zero_mixed_calibration(X);
 
 %% Zero-mixed bootstrap
-
 
 fprintf("\nZero-mixed bootstrap with  %.0f replicas; alpha = %.3f\n", B, alpha);
 fprintf("\nZero-mixed bootstrap\n");
@@ -64,12 +63,6 @@ toc
 
 %%
 
-tic
-bench_comb_bern()
-toc
-
-%%
-
 fprintf("\n Correlation matrix:\n");
 disp(R_CB);
 
@@ -90,33 +83,19 @@ fprintf("  p3: [ %.3f , %.3f ]\n", p_CI_CB(3,1), p_CI_CB(3,2));
 
 plot_bootstrap_rho(rho_hat_CB, rho_CB, alpha);          % 3 pannelli pairwise
 % plot_bootstrap_rho_3d(rho_hat_CB, rho_CB, alpha);     % opzionale
-%% Semi-parametric - VEDI SOTTO VERSIONE IN UNA SOLA FUNZIONE
+%% Semi-parametric 
+
 fprintf("\nSemi-Parametric\n");
 
-cdf_semiparametric_1 = cumulative_cdf_semi_parametric(p(1),X(:,1));
-U_1 = cdf_semiparametric_1(X(:,1));
+cdf_semiparametric = cumulative_cdf_semi_parametric_vec(p,X);
 
-cdf_semiparametric_2 = cumulative_cdf_semi_parametric(p(2),X(:,2));
-U_2 = cdf_semiparametric_2(X(:,2));
+U_SP = zeros(size(X));
+for i = 1:size(X,2)
+    U_SP(:,i) = cdf_semiparametric{i}(X(:,i));
+end
 
-cdf_semiparametric_3 = cumulative_cdf_semi_parametric(p(3),X(:,3));
-U_3 = cdf_semiparametric_3(X(:,3));
-
-U_SP = [U_1 U_2 U_3];
 [rho_SP,~] = calibrate_model(U_SP,p);
 
-%%
-scatter(sort(X(:,1)),sort(U_1))
-hold on
-scatter(sort(X(:,1)),sort(U_CB(:,1)))
-%%
-
-sorted = sort(X(:,1));
-S_emp = sort(U_1);
-S_LN = sort(U_CB(:,1));
-semilogx(sorted, S_emp, 'o', 'MarkerSize', 4, 'DisplayName','Empirica'); 
-hold on; grid on;
-semilogx(sorted, S_LN,  '-', 'LineWidth', 1.6, 'DisplayName','Lognormale');
 %%
 
 R_SP = squareform(rho_SP) + eye(length(rho_SP));
@@ -154,9 +133,9 @@ end
 % and the calibrating period
 start_date = datetime("01/01/1980");
 end_date = datetime("31/12/1983");
-N = 10000;
+N = 100;
 alpha = [0.05 0.005];
-mode = 'Fixed';
+mode = 'Rolling-window';
 data_new = data_split(data,start_date,datetime("31/12/1990"));
 
 tic
