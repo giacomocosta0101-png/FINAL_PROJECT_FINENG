@@ -1,7 +1,7 @@
 % Project 6: Copula calibration
 
 filename = "danishmulti.csv";
-addpath('utilities','Comb_and_Semi','zero_mixed','Backtest');
+addpath('utilities','Comb_and_Semi','zero_mixed','Backtest','Extra');
 
 data = readDataset(filename);
 
@@ -143,3 +143,36 @@ plot_backtest(backtest_window, exc_rolling_window,...
 
 res_static = christoffersen_test(exc_static_calibration);
 res_rolling = christoffersen_test(exc_rolling_window);
+
+
+%% Extra 1
+
+% Spherical Parameterization
+R_new = calibrate_model_generalized(U_CB,p);
+disp(R_new)
+
+% Try with a bigger dataset
+dim = 5;
+U_big = rand(50,dim); 
+p_big = 0.3 + 0.3 * rand(1, dim); % between 0.3 and 0.6
+for i=1:dim
+    U_big(U_big(:,i) < p_big(i),i) = p_big(i);
+end
+
+R_big = calibrate_model_generalized(U_big,p_big);
+disp(R_big)
+
+%% Extra 2
+% Extreme value theory
+
+cdf_semiparam_2 = cumulative_cdf_semi_parametric_pareto(p,X);
+U_SP_2 = zeros(size(X));
+
+for i = 1:size(X,2)
+    U_SP_2(:,i) = cdf_semiparam_2{i}(X(:,i));
+end
+
+[rho_SP_2,~] = calibrate_model(U_SP,p);
+
+rho_SP_2
+rho_SP
