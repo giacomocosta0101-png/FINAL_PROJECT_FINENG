@@ -3,6 +3,7 @@
 filename = "danishmulti.csv";
 addpath('utilities','Comb_and_Semi','zero_mixed','Backtest');
 
+
 data = readDataset(filename);
 
 building = data.Building(:);
@@ -68,7 +69,7 @@ disp(R_CB);
 fprintf(" Bootstrap:\n");
 rng(762);
 model2 = 'Comb-Bernoulli';
-[rho_CI_CB, p_CI_CB, rho_hat_CB, pi_hat_CB] = bootstrap(rho_CB,p,mu,sigma,model2,N,100,alpha);
+[rho_CI_CB, p_CI_CB, rho_hat_CB, pi_hat_CB] = bootstrap(rho_CB,p,mu,sigma,model2,N,1000,alpha);
 
 fprintf(" \n Confidence intervals:\n\n");
 fprintf("  Rho_12: [ %.3f , %.3f ]\n", rho_CI_CB(1,1), rho_CI_CB(1,2));
@@ -123,6 +124,29 @@ alpha = [0.05 0.01];
 
 %% a. Static calibration
 
+<<<<<<< HEAD
+[rho_SP2,~] = calibrate_model(U_SP,p);
+
+%% HS for Var
+%We simply take the empirical quantile from the historical total losses
+
+losses = data.Total;
+losses_sorted = sort(losses, "descend");
+n = height(data);
+
+hs_95 = losses_sorted(round(0.05*n), :);
+hs_99 = losses_sorted(round(0.01*n), :);
+
+fprintf("95th and 99th loss quantiles from historical sim: %.3f; %.3f\n",hs_95,hs_99 )
+
+%% Backtest
+
+%calibrating function has as input data (full, timetable)
+% and the calibrating period
+start_date = datetime("01/01/1980");
+end_date = datetime("31/12/1983");
+N = 10000;
+alpha = [0.05 0.005];
 mode = 'Fixed';
 [backtest_window,exc_static_calibration,VaR_static_calibration] = backtest(data,alpha,...
     training_window_start_date,training_window_end_date,N,mode);
