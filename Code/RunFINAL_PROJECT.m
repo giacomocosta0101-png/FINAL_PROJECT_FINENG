@@ -155,8 +155,8 @@ losses = data.Total;
 losses_sorted = sort(losses, "descend");
 n = height(data);
 
-hs_95 = sqrt(365)*losses_sorted(round(0.05*n), :);
-hs_99 = sqrt(365)*losses_sorted(round(0.01*n), :);
+hs_95 = losses_sorted(round(0.05*n), :);
+hs_99 = losses_sorted(round(0.01*n), :);
 
 fprintf("95th and 99th loss quantiles from historical sim: %.3f; %.3f\n",hs_95,hs_99 )
 
