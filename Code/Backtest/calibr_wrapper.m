@@ -1,17 +1,31 @@
 function calibrated_parameters = calibr_wrapper(X)
-%ritorna cell di struct
+% CALIBR_WRAPPER  Main wrapper to calibrate three different copula models 
+% for zero-inflated data.
+%
+% This function runs a full calibration for three distinct 
+% approaches: 1) Zero-Mixed, 2) Comb-Bernoulli, and 3) Semi-Parametric. 
+% It evaluates the marginals and extracts the copula correlation matrices.
+%
+% INPUT
+%   X : (N x d) matrix of observations (e.g., jump sizes where 0 = no jump)
+%
+% OUTPUT
+%   calibrated_parameters : (3 x 1) cell array of structs containing:
+%       {1} zero_mixed : parameters from the zero-mixed calibration
+%       {2} comb_ber   : struct with p, mu, sigma, and rho (Comb-Bernoulli)
+%       {3} semi_par   : struct with p, mu, sigma, rho, and X (Semi-Parametric)
 
 calibrated_parameters = cell(3,1);
 
 
-%% zero mixed
+%% Zero-Mixed
 
 
 zero_mixed = zero_mixed_calibration(X);
 
 calibrated_parameters{1} = zero_mixed; 
 
-%% comb ber
+%% Comb-Bernoulli
 comb_ber = struct();
 [p, mu, sigma] = marginal_parameter_calibration(X);
 cdf_comb_bernoulli = marginal_cdf(mu,sigma,p);
@@ -28,7 +42,7 @@ comb_ber.rho = rho_CB;
 calibrated_parameters{2} = comb_ber; 
 
 
-%% semi parametric
+%% Semi-Parametric
 
 semi_par = struct();
 

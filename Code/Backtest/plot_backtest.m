@@ -1,6 +1,23 @@
 function plot_backtest(backtest_window, exceptions, VaR, mode, varargin)
-% PLOT_BACKTEST  Backtest VaR plot per ogni modello.
+% PLOT_BACKTEST  Visualize VaR backtesting results with exception highlights.
 %
+% Generates backtest plots for each model, comparing the realized losses 
+% against the 95% and 99% Value at Risk (VaR) thresholds. It dynamically 
+% highlights exceptions and annotates the most severe ones.
+%
+% INPUT
+%   backtest_window : (timetable) backtesting data containing 'Date' and 'Total'
+%   exceptions      : (1 x 3) cell array of boolean matrices (N x 2) for exceptions
+%   VaR             : (matrix or 3D array) VaR estimates. Size (3 x 2) for 
+%                     'Fixed' mode, or (3 x 2 x N) for rolling/dynamic mode.
+%   mode            : (string) 'Fixed' or 'Dynamic' (or 'Rolling')
+%
+% OPTIONAL PARAMETERS (Name-Value pairs)
+%   'ModelNames'    : (cell array) names of the models (default: {'M1','M2','M3'})
+%   'TopK'          : (scalar) number of top exceptions to annotate (default: 5)
+%   'AnnotateLevel' : (scalar/string) 99, 95, or 'both' (default: 99)
+
+
 %   plot_backtest(bw, exc, VaR, mode)
 %   plot_backtest(..., 'ModelNames',    {'M1','M2','M3'})
 %   plot_backtest(..., 'TopK',          5)      % quante eccezioni annotare

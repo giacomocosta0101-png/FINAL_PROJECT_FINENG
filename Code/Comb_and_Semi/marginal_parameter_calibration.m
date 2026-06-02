@@ -1,5 +1,6 @@
 function [p,mu,sigma] = marginal_parameter_calibration(X)
-% Calibrate lognormal + prob mass in zero distribution parameters.
+% MARGINAL_PARAMETER_CALIBRATION  Calibrate lognormal + prob mass in zero 
+% distribution parameters.
 %
 %   INPUT:
 %       X: full data 

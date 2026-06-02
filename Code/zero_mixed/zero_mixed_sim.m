@@ -64,7 +64,7 @@ for b = 1:B
         mu = zero_mixed{k}.mu(:)';
         sigma = zero_mixed{k}.sigma(:)';
 
-        if s == 1
+        if isscalar(s)
 
             % Univariate lognormal
             X_k = exp(mu + sigma .* randn(n_k, 1));
