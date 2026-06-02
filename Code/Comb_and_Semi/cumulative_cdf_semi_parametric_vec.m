@@ -1,4 +1,17 @@
 function cdf = cumulative_cdf_semi_parametric_vec(p, X)
+% CUMULATIVE_CDF_SEMI_PARAMETRIC_VEC  Construct marginal semi-parametric 
+% CDF function handles for a matrix of observations.
+%
+% Models the distribution of each column in X with a point mass at zero 
+% and an empirical step function for the strictly positive observations. 
+%
+% INPUT
+%   p : (1 x d) probabilities of positive observation P(X_i > 0)
+%   X : (N x d) matrix of observations (0 = no jump, >0 = jump sizes)
+%
+% OUTPUT
+%   cdf : (1 x d) cell array of function handles. Each handle @(x) evaluates 
+%         the marginal semi-parametric CDF for the i-th dimension.
 
     % Positive observations = jump sizes
     X_sorted = sort(X);
@@ -28,6 +41,17 @@ end
 
 
 function u = semi_parametric_eval(x, p, x_unique, F_unique)
+% SEMI_PARAMETRIC_EVAL  Auxiliary function to evaluate the marginal 
+% semi-parametric CDF at given points.
+%
+% INPUT
+%   x        : (array) points at which to evaluate the CDF
+%   p        : (scalar) probability of positive observation P(X > 0)
+%   x_unique : (vector) unique positive jump sizes from the training data
+%   F_unique : (vector) scaled empirical CDF values at x_unique
+%
+% OUTPUT
+%   u : (array) evaluated CDF values, returning the same size as x
 
     u = zeros(size(x));
 

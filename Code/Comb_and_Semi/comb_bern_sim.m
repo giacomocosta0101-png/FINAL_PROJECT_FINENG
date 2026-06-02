@@ -1,8 +1,6 @@
 function sim = comb_bern_sim(L, mu, sigma, p, N)
-%
-% Simulates N observations from a Gaussian copula with
-% Bernoulli-lognormal mixed marginals following Algorithm 1 of
-% Baviera-Manzoni 2026.
+% COMB_BERN_SIM  Simulates N observations from a Gaussian copula with
+% Bernoulli-lognormal mixed marginals following Algorithm 1.
 %
 % Convention:
 %   p_j = P(X_j > 0)
@@ -10,14 +8,14 @@ function sim = comb_bern_sim(L, mu, sigma, p, N)
 %   X_j | X_j > 0 ~ Lognormal(mu_j, sigma_j^2)
 %
 % INPUT:
-%   R      : d x d Gaussian copula correlation matrix
+%   R      : (d x d) Gaussian copula correlation matrix
 %   mu     : mean vector
 %   sigma  : std dev vector
 %   p      : positive-claim probability vector
 %   N      : number of simulations
 %
 % OUTPUT:
-%   sim    : N x d matrix of simulated observations
+%   sim    : (N x d) matrix of simulated observations
 
 %% Input checks
 

@@ -1,6 +1,6 @@
 function [rho,p_hat,R] = calibrate_model(U,p)
-% Calibrate Gaussian copula correlation under the Comb-Bernoulli model
-% via IFM (eq. 9, Sec. 2.4.1 of Baviera et al. 2026). Hardcoded for d=3.
+% CALIBRATE_MODEL  Calibrate Gaussian copula correlation under the 
+% Comb-Bernoulli model via IFM. Hardcoded for d=3.
 %
 % INPUT
 %   U : (N x 3) marginal CDF values F_i(x_i; p_i) for each observation

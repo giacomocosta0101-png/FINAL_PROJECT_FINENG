@@ -1,8 +1,6 @@
 function sim = semi_parametric_sim(L,p, N)
-%
-% Simulates N observations from a Gaussian copula with
-% Bernoulli-lognormal mixed marginals following Algorithm 1 of
-% Baviera-Manzoni 2026.
+% SEMI_PARAMETRIC_SIM  Simulates N observations from a Gaussian copula with
+% Bernoulli-lognormal mixed marginals following Algorithm 1.
 %
 % Convention:
 %   p_j = P(X_j > 0)

@@ -1,5 +1,24 @@
 function VaR = var_calc(data,alpha,window_start,...
     window_end,N)
+% VAR_CALC  Calculate Value at Risk (VaR) across different copula models.
+%
+% This function isolates a specific time window from the dataset, calibrates 
+% three copula models (Zero-Mixed, Comb-Bernoulli, Semi-Parametric) using 
+% that data, simulates total losses, and computes the empirical VaR for 
+% the specified significance levels.
+%
+% INPUT
+%   data         : (timetable) full dataset containing 'Building', 'Contents', 
+%                  and 'Profits' variables
+%   alpha        : (scalar or vector) significance level(s) for the VaR 
+%                  (e.g., 0.05 for a 95% confidence level)
+%   window_start : (datetime or string) start of the calibration window
+%   window_end   : (datetime or string) end of the calibration window
+%   N            : (scalar) number of Monte Carlo simulations to run
+%
+% OUTPUT
+%   VaR          : (3 x m) matrix of VaR estimates, where rows correspond 
+%                  to the 3 models and columns correspond to the m alpha levels
 
 %% Calibration
 data_new = data_split(data, window_start, ...

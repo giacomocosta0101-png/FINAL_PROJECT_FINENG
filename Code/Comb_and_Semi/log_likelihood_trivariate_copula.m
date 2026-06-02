@@ -1,6 +1,7 @@
 function log_likelihood = log_likelihood_trivariate_copula(state_matrix,theta,...
     Z,ia,ic,num_comb)
-% Log-likelihood (copula part only) for the trivariate Gaussian copula.
+% LOG_LIKELIHOOD_TRIVARIATE_COPULA  Evaluates the Log-likelihood (copula 
+% part only) for the trivariate Gaussian copula.
 % The marginal contribution is omitted because it is constant in theta
 % in the IFM step.
 %
@@ -10,6 +11,7 @@ function log_likelihood = log_likelihood_trivariate_copula(state_matrix,theta,..
 %   Z            : (N x 3) Gaussian quantiles Phi^{-1}(F_i(x_i; p_i))
 %   ia, ic       : useful vectors to 'orientate' in the state matrix
 %   num_comb     : number of unique active sets observed
+%
 % OUTPUT
 %   log_likelihood : scalar
 
