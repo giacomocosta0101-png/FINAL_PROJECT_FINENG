@@ -1,7 +1,7 @@
 % Project 6: Copula calibration
 
 filename = "danishmulti.csv";
-%addpath('utilities','ex_1','ex_2','ex_4','zero_mixed','Backtest','prove');
+addpath('utilities','ex_1','ex_2','ex_4','zero_mixed','Backtest','prove');
 
 data = readDataset(filename);
 
@@ -77,7 +77,7 @@ disp(R_CB);
 fprintf(" Bootstrap:\n");
 rng(762);
 model2 = 'Comb-Bernoulli';
-[rho_CI_CB, p_CI_CB, rho_hat_CB, pi_hat_CB] = bootstrap(rho_CB,p,mu,sigma,model2,N,100,alpha);
+[rho_CI_CB, p_CI_CB, rho_hat_CB, pi_hat_CB] = bootstrap(rho_CB,p,mu,sigma,model2,N,1000,alpha);
 
 fprintf(" \n Confidence intervals:\n\n");
 fprintf("  Rho_12: [ %.3f , %.3f ]\n", rho_CI_CB(1,1), rho_CI_CB(1,2));
@@ -147,6 +147,18 @@ for i = 1:size(X,2)
 end
 
 [rho_SP2,~] = calibrate_model(U_SP,p);
+
+%% HS for Var
+%We simply take the empirical quantile from the historical total losses
+
+losses = data.Total;
+losses_sorted = sort(losses, "descend");
+n = height(data);
+
+hs_95 = sqrt(365)*losses_sorted(round(0.05*n), :);
+hs_99 = sqrt(365)*losses_sorted(round(0.01*n), :);
+
+fprintf("95th and 99th loss quantiles from historical sim: %.3f; %.3f\n",hs_95,hs_99 )
 
 %% Backtest
 
