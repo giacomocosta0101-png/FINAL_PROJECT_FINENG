@@ -30,6 +30,7 @@ for k = 1:K
 end
 
 cumprob = cumsum(prob);
+cumprob(end) = 1;
 
 sim = zeros(N, d, B);
 
@@ -64,7 +65,7 @@ for b = 1:B
         mu = zero_mixed{k}.mu(:)';
         sigma = zero_mixed{k}.sigma(:)';
 
-        if isscalar(s)
+        if s == 1
 
             % Univariate lognormal
             X_k = exp(mu + sigma .* randn(n_k, 1));

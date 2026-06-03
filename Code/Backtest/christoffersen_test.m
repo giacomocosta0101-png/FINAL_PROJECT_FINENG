@@ -1,11 +1,34 @@
 function out = christoffersen_test(exceptions)
-% CHRISTOFFERSEN_TEST  Test di indipendenza + Kupiec POF + Conditional
-% Coverage per ogni modello e ogni livello di confidenza.
+% CHRISTOFFERSEN_TEST  Run POF, independence and conditional-coverage tests.
 %
 %   out = christoffersen_test(exceptions)
 %
-%   exceptions: cell {1xM} di matrici Nx2 (col1 = 95%, col2 = 99%)
-%   out:        struct con conteggi, statistiche e p-value
+%   INPUT
+%     exceptions : 1xM cell array; each entry is an N x 2 logical/numeric
+%                  matrix of VaR exceptions (column 1 = 95%, column 2 = 99%).
+%
+%   OUTPUT
+%     out        : struct with counts, LR statistics and p-values.
+
+arguments
+    exceptions (1,:) cell {mustBeNonempty}
+end
+
+%% Input checks
+
+for m = 1:numel(exceptions)
+    exc = exceptions{m};
+
+    if ~(isnumeric(exc) || islogical(exc)) || ~ismatrix(exc) || isempty(exc)
+        error('christoffersen_test:invalidEntry', ...
+            'exceptions{%d} must be a non-empty 2-D logical/numeric matrix.', m);
+    end
+
+    if size(exc,2) ~= 2
+        error('christoffersen_test:invalidColumns', ...
+            'exceptions{%d} must have exactly 2 columns.', m);
+    end
+end
 
     levels    = [0.05, 0.01];
     lvl_names = {'95%','99%'};

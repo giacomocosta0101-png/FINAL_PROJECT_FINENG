@@ -1,4 +1,38 @@
 function X_new = semi_parametric_losses(L, p, N, X)
+% SEMI_PARAMETRIC_LOSSES  Simulate losses using a semi-parametric copula model.
+%
+% This function generates simulated uniform margins with a specific 
+% dependence structure, then maps them back to the loss domain by 
+% inverting the semi-parametric empirical CDF via linear interpolation.
+%
+% INPUT
+%   L : (matrix) dependence structure parameter (e.g., Cholesky factor of copula)
+%   p : (1 x d) probabilities of positive observation P(X > 0)
+%   N : (scalar) number of Monte Carlo simulations to generate
+%   X : (M x d) original calibration data matrix
+%
+% OUTPUT
+%   X_new : (N x d) matrix of simulated losses
+
+arguments
+    L (:,:) double {mustBeNonempty, mustBeReal, mustBeFinite}
+    p (1,:) double {mustBeNonempty, mustBeReal, mustBeFinite}
+    N (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
+    X (:,:) double {mustBeNonempty, mustBeReal, mustBeFinite, ...
+                    mustBeGreaterThanOrEqual(X, 0)}
+end
+
+%% Input checks
+
+if size(L,1) ~= size(L,2)
+    error('semi_parametric_losses:invalidL', ...
+        'L must be a square matrix.');
+end
+
+if size(L,1) ~= numel(p) || size(X,2) ~= numel(p)
+    error('semi_parametric_losses:dimensionMismatch', ...
+        'Dimensions of L, p and X must agree.');
+end
 
     U_sim = semi_parametric_sim(L, p, N);
     X_new = zeros(N,size(X,2));

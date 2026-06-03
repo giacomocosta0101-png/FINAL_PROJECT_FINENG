@@ -1,4 +1,4 @@
-function log_likelihood = log_likelihood_trivariate_copula(state_matrix,theta,...
+function log_likelihood = log_likelihood_trivariate_copula_generalized(state_matrix,theta,...
     Z,ia,ic,num_comb)
 % LOG_LIKELIHOOD_TRIVARIATE_COPULA  Evaluates the Log-likelihood (copula 
 % part only) for the trivariate Gaussian copula.
@@ -15,11 +15,8 @@ function log_likelihood = log_likelihood_trivariate_copula(state_matrix,theta,..
 % OUTPUT
 %   log_likelihood : scalar
 
-L = [1 0 0;
-    cos(theta(1)) sin(theta(1)) 0;
-    cos(theta(2)) cos(theta(3))*sin(theta(2)) sin(theta(3))*sin(theta(2))];
-
-R = L*L';
+d = size(Z,2);
+[R, ~] = corr_from_cholesky_param(theta, d); 
 
 log_likelihood = 0;
 
