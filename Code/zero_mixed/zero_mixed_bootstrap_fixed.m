@@ -77,7 +77,7 @@ rho_mat = NaN(B, n_rho);
 
 parfor b = 1:B
     X_b = zero_mixed_sim_fixed(zero_mixed, N, 1);
-    zero_mixed_b = zero_mixed_calibration(X_b);
+    zero_mixed_b = zero_mixed_calibration(X_b(:,:,1));
     [rho_mat(b,:),~] = zero_mixed_unpacking(zero_mixed_b);
 end
 

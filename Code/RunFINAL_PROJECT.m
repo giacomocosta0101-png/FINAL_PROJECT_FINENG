@@ -1,8 +1,11 @@
 % Project 6: Copula calibration
 
-filename = "danishmulti.csv";
-addpath('utilities','Comb_and_Semi','zero_mixed','Backtest');
-
+code_dir = fileparts(mfilename('fullpath'));
+filename = fullfile(code_dir, "danishmulti.csv");
+addpath(code_dir, ...
+    fullfile(code_dir, 'Comb_and_Semi'), ...
+    fullfile(code_dir, 'zero_mixed'), ...
+    fullfile(code_dir, 'Backtest'));
 
 data = readDataset(filename);
 
@@ -116,15 +119,14 @@ fprintf("  p3: [ %.3f , %.3f ]\n", p_CI_SP(3,1), p_CI_SP(3,2));
 %% 4.BACKTEST
 %% General parameters
 
-training_window_start_date= datetime("01/01/1980");
-training_window_end_date = datetime("31/12/1983");
+training_window_start_date = datetime(1980,1,1);
+training_window_end_date = datetime(1983,12,31);
 
 N = size(X,1);
 alpha = [0.05 0.01];
 
 %% a. Static calibration
 
-<<<<<<< HEAD
 [rho_SP2,~] = calibrate_model(U_SP,p);
 
 %% HS for Var
@@ -143,16 +145,16 @@ fprintf("95th and 99th loss quantiles from historical sim: %.3f; %.3f\n",hs_95,h
 
 %calibrating function has as input data (full, timetable)
 % and the calibrating period
-start_date = datetime("01/01/1980");
-end_date = datetime("31/12/1983");
-N = 10000;
-alpha = [0.05 0.005];
+start_date = datetime(1980,1,1);
+end_date = datetime(1983,12,31);
+N = 4000;
+alpha = [0.05 0.01];
 mode = 'Fixed';
 [backtest_window,exc_static_calibration,VaR_static_calibration] = backtest(data,alpha,...
     training_window_start_date,training_window_end_date,N,mode);
 
 plot_backtest(backtest_window, exc_static_calibration,...
-    VaR_static_calibration, 'Static calibration', ...
+    VaR_static_calibration, mode, ...
               'ModelNames', {'Zero_mixed','CB','Semi_par'});
 %% b. Rolling-window calibration
 

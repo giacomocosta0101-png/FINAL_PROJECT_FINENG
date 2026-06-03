@@ -9,8 +9,8 @@ function plot_backtest(backtest_window, exceptions, VaR, mode, varargin)
 %   backtest_window : (timetable) backtesting data containing 'Date' and 'Total'
 %   exceptions      : (1 x 3) cell array of boolean matrices (N x 2) for exceptions
 %   VaR             : (matrix or 3D array) VaR estimates. Size (3 x 2) for 
-%                     'Fixed' mode, or (3 x 2 x N) for rolling/dynamic mode.
-%   mode            : (string) 'Fixed' or 'Dynamic' (or 'Rolling')
+%                     'Fixed' mode, or (3 x 2 x N) for 'Rolling-window'.
+%   mode            : (string) 'Fixed' or 'Rolling-window'
 %
 % OPTIONAL PARAMETERS (Name-Value pairs)
 %   'ModelNames'    : (cell array) names of the models (default: {'M1','M2','M3'})
@@ -23,9 +23,49 @@ function plot_backtest(backtest_window, exceptions, VaR, mode, varargin)
 %   plot_backtest(..., 'TopK',          5)      % quante eccezioni annotare
 %   plot_backtest(..., 'AnnotateLevel', 99)     % 99 | 95 | 'both'
 
+arguments
+    backtest_window timetable
+    exceptions (1,3) cell {mustBeNonempty}
+    VaR double {mustBeNonempty, mustBeReal, mustBeFinite}
+    mode {mustBeTextScalar}
+end
+
+arguments (Repeating)
+    varargin
+end
+
+%% Input checks
+
+mode = string(mode);
+if ~isscalar(mode) || ~any(mode == ["Fixed","Rolling-window"])
+    error('plot_backtest:invalidMode', ...
+        'mode must be ''Fixed'' or ''Rolling-window''.');
+end
+
+N = height(backtest_window);
+for m = 1:3
+    exc = exceptions{m};
+    if ~(isnumeric(exc) || islogical(exc)) || ~isequal(size(exc), [N 2])
+        error('plot_backtest:invalidExceptionShape', ...
+            'exceptions{%d} must be an %d x 2 logical/numeric matrix.', m, N);
+    end
+end
+
+if mode == "Fixed"
+    if ~isequal(size(VaR), [3 2])
+        error('plot_backtest:invalidFixedVaRShape', ...
+            'In Fixed mode, VaR must have size 3 x 2.');
+    end
+else
+    if ndims(VaR) ~= 3 || ~isequal(size(VaR), [3 2 N])
+        error('plot_backtest:invalidRollingVaRShape', ...
+            'In Rolling-window mode, VaR must have size 3 x 2 x %d.', N);
+    end
+end
+
     p = inputParser;
-    p.addParameter('ModelNames',   {'Modello 1','Modello 2','Modello 3'});
-    p.addParameter('TopK',         5);
+    p.addParameter('ModelNames', {'Modello 1','Modello 2','Modello 3'});
+    p.addParameter('TopK', 5);
     p.addParameter('AnnotateLevel', 99);
     p.parse(varargin{:});
     model_names = p.Results.ModelNames;
@@ -44,7 +84,7 @@ function plot_backtest(backtest_window, exceptions, VaR, mode, varargin)
                'Position',[100 100 1150 520]);
         ax = gca; hold(ax,'on'); grid(ax,'on'); box(ax,'on');
 
-        if strcmpi(mode,'Fixed')
+        if mode == "Fixed"
             VaR95 = VaR(m,1) * ones(N,1);
             VaR99 = VaR(m,2) * ones(N,1);
         else

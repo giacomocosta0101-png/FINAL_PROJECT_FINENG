@@ -15,6 +15,29 @@ function calibrated_parameters = calibr_wrapper(X)
 %       {2} comb_ber   : struct with p, mu, sigma, and rho (Comb-Bernoulli)
 %       {3} semi_par   : struct with p, mu, sigma, rho, and X (Semi-Parametric)
 
+arguments
+    X (:,:) double {mustBeNonempty, mustBeReal, mustBeFinite, ...
+                    mustBeGreaterThanOrEqual(X, 0)}
+end
+
+%% Input checks
+
+if size(X,2) ~= 3
+    error('calibr_wrapper:invalidDimension', ...
+        'X must have exactly 3 columns.');
+end
+
+if any(sum(X > 0, 1) == 0)
+    error('calibr_wrapper:noPositiveObservations', ...
+        'Each column of X must contain at least one strictly positive observation.');
+end
+
+num_unique_positive = arrayfun(@(j) numel(unique(X(X(:,j) > 0,j))), 1:3);
+if any(num_unique_positive < 2)
+    error('calibr_wrapper:degeneratePositiveTail', ...
+        'Each column of X must contain at least two distinct strictly positive values.');
+end
+
 calibrated_parameters = cell(3,1);
 
 

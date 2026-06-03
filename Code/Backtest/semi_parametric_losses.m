@@ -14,6 +14,26 @@ function X_new = semi_parametric_losses(L, p, N, X)
 % OUTPUT
 %   X_new : (N x d) matrix of simulated losses
 
+arguments
+    L (:,:) double {mustBeNonempty, mustBeReal, mustBeFinite}
+    p (1,:) double {mustBeNonempty, mustBeReal, mustBeFinite}
+    N (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
+    X (:,:) double {mustBeNonempty, mustBeReal, mustBeFinite, ...
+                    mustBeGreaterThanOrEqual(X, 0)}
+end
+
+%% Input checks
+
+if size(L,1) ~= size(L,2)
+    error('semi_parametric_losses:invalidL', ...
+        'L must be a square matrix.');
+end
+
+if size(L,1) ~= numel(p) || size(X,2) ~= numel(p)
+    error('semi_parametric_losses:dimensionMismatch', ...
+        'Dimensions of L, p and X must agree.');
+end
+
     U_sim = semi_parametric_sim(L, p, N);
     X_new = zeros(N,size(X,2));
     

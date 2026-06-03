@@ -15,6 +15,19 @@ function obj = mat_sim(calibrated_parameters, N)
 %   obj                   : (3 x 1) cell array. Each entry contains an 
 %                           (N x 1) vector of simulated total aggregate losses.
 
+arguments
+    calibrated_parameters (3,1) cell {mustBeNonempty}
+    N (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
+end
+
+%% Input checks
+
+if ~iscell(calibrated_parameters{1}) || ...
+        ~isstruct(calibrated_parameters{2}) || ...
+        ~isstruct(calibrated_parameters{3})
+    error('mat_sim:invalidParameters', ...
+        'calibrated_parameters must follow the output structure of calibr_wrapper.');
+end
 
 obj = cell(3, 1); % Initialize the output cell array
 

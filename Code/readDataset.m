@@ -1,9 +1,12 @@
 function data = readDataset(filename)
 
-    raw_data = readtable(filename,'ReadRowNames',false);
+    opts = detectImportOptions(filename, 'Delimiter', ';');
+    opts = setvartype(opts, 'Date', 'datetime');
+    opts = setvaropts(opts, 'Date', 'InputFormat', 'yyyy-MM-dd');
+    raw_data = readtable(filename, opts);
     
 
-    day_zero = datetime('1980-01-01');     
+    day_zero = datetime(1980,1,1);     
     C = {day_zero,0,0,0,0};
     day_zero = cell2table(C,'VariableNames',{'Date','Building','Contents','Profits','Total'});
 
@@ -26,7 +29,6 @@ function data = readDataset(filename)
     data.Properties.VariableNames = ["Building","Contents","Profits","Total"];
 
 end
-
 
 
 

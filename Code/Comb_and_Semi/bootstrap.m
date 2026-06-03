@@ -43,6 +43,9 @@ if strcmp(model,'Comb-Bernoulli')
 elseif strcmp(model,'Semi-parametric')
     generate_replica = @(Chol)semi_parametric_sim(Chol,p,N);
     flag = 2;
+else
+    error('bootstrap:unknownModel', ...
+        "Unknown model '%s'. Use 'Comb-Bernoulli' or 'Semi-parametric'.", model);
 end
 
 R = squareform(rho)+eye(3);
@@ -96,7 +99,6 @@ for i = 1:3
 end
 
 end
-
 
 
 
