@@ -34,34 +34,8 @@ arguments (Repeating)
     varargin
 end
 
-%% Input checks
-
 mode = string(mode);
-if ~isscalar(mode) || ~any(mode == ["Fixed","Rolling-window"])
-    error('plot_backtest:invalidMode', ...
-        'mode must be ''Fixed'' or ''Rolling-window''.');
-end
-
 N = height(backtest_window);
-for m = 1:3
-    exc = exceptions{m};
-    if ~(isnumeric(exc) || islogical(exc)) || ~isequal(size(exc), [N 2])
-        error('plot_backtest:invalidExceptionShape', ...
-            'exceptions{%d} must be an %d x 2 logical/numeric matrix.', m, N);
-    end
-end
-
-if mode == "Fixed"
-    if ~isequal(size(VaR), [3 2])
-        error('plot_backtest:invalidFixedVaRShape', ...
-            'In Fixed mode, VaR must have size 3 x 2.');
-    end
-else
-    if ndims(VaR) ~= 3 || ~isequal(size(VaR), [3 2 N])
-        error('plot_backtest:invalidRollingVaRShape', ...
-            'In Rolling-window mode, VaR must have size 3 x 2 x %d.', N);
-    end
-end
 
     p = inputParser;
     p.addParameter('ModelNames', {'Modello 1','Modello 2','Modello 3'});
