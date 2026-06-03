@@ -125,12 +125,7 @@ training_window_end_date = datetime(1983,12,31);
 N = size(X,1);
 alpha = [0.05 0.01];
 
-%% a. Static calibration
-
-[rho_SP2,~] = calibrate_model(U_SP,p);
-
-%% HS for Var
-%We simply take the empirical quantile from the historical total losses
+%% Benchmark: VaR via Historical Simulation
 
 losses = data.Total;
 losses_sorted = sort(losses, "descend");
@@ -141,18 +136,12 @@ hs_99 = losses_sorted(round(0.01*n), :);
 
 fprintf("95th and 99th loss quantiles from historical sim: %.3f; %.3f\n",hs_95,hs_99 )
 
-%% Backtest
+%% a. Static Calibration
 
-%calibrating function has as input data (full, timetable)
-% and the calibrating period
-start_date = datetime(1980,1,1);
-end_date = datetime(1983,12,31);
-N = 4000;
-alpha = [0.05 0.01];
 mode = 'Fixed';
 [backtest_window,exc_static_calibration,VaR_static_calibration] = backtest(data,alpha,...
     training_window_start_date,training_window_end_date,N,mode);
-
+%%
 plot_backtest(backtest_window, exc_static_calibration,...
     VaR_static_calibration, mode, ...
               'ModelNames', {'Zero_mixed','CB','Semi_par'});
@@ -161,11 +150,11 @@ rng(25)
 mode = 'Rolling-window';
 [~,exc_rolling_window,VaR_rolling_window] = backtest(data,alpha,...
     training_window_start_date,training_window_end_date,N,mode);
-
+%%
 plot_backtest(backtest_window, exc_rolling_window,...
-    VaR_rolling_window, 'Rolling-window', ...
+    VaR_rolling_window, mode, ...
               'ModelNames', {'Zero_mixed','CB','Semi_par'});
 %% Chrisoffersen test:
-
 res_static = christoffersen_test(exc_static_calibration);
+%%
 res_rolling = christoffersen_test(exc_rolling_window);
