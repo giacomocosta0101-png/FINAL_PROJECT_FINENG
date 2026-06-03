@@ -14,22 +14,6 @@ arguments
     exceptions (1,:) cell {mustBeNonempty}
 end
 
-%% Input checks
-
-for m = 1:numel(exceptions)
-    exc = exceptions{m};
-
-    if ~(isnumeric(exc) || islogical(exc)) || ~ismatrix(exc) || isempty(exc)
-        error('christoffersen_test:invalidEntry', ...
-            'exceptions{%d} must be a non-empty 2-D logical/numeric matrix.', m);
-    end
-
-    if size(exc,2) ~= 2
-        error('christoffersen_test:invalidColumns', ...
-            'exceptions{%d} must have exactly 2 columns.', m);
-    end
-end
-
     levels    = [0.05, 0.01];
     lvl_names = {'95%','99%'};
     M = numel(exceptions);

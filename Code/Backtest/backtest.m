@@ -41,42 +41,11 @@ function [backtest_window,exceptions,VaR] = backtest(data,alpha,...
 
 arguments
     data timetable
-    alpha (1,:) double {mustBeNonempty, mustBeReal, mustBeFinite}
-    window_start {mustBeDatetimeTextScalar}
-    window_end {mustBeDatetimeTextScalar}
-    N (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
+    alpha (1,:) double
+    window_start datetime
+    window_end datetime
+    N (1,1) double
     mode {mustBeTextScalar}
-end
-
-%% Input checks
-
-if any(alpha <= 0 | alpha >= 1)
-    error('backtest:invalidAlpha', ...
-        'alpha must contain values strictly between 0 and 1.');
-end
-
-window_start = localDatetimeScalar(window_start, 'window_start');
-window_end = localDatetimeScalar(window_end, 'window_end');
-mode = string(mode);
-
-if window_start > window_end
-    error('backtest:invalidWindow', ...
-        'window_start must be earlier than or equal to window_end.');
-end
-
-if ~isscalar(mode) || ~any(mode == ["Fixed","Rolling-window"])
-    error('backtest:unknownMode', ...
-        'mode must be ''Fixed'' or ''Rolling-window''.');
-end
-
-if mode == "Rolling-window" && numel(alpha) ~= 2
-    error('backtest:rollingAlphaCount', ...
-        'Rolling-window mode currently expects exactly two alpha levels.');
-end
-
-if window_end >= data.Date(end)
-    error('backtest:emptyBacktestWindow', ...
-        'window_end must be strictly earlier than the last date in data.');
 end
 
 % Consider the backtest window (evaluation) from the next day after 
@@ -84,28 +53,28 @@ end
 
 backtest_window = data_split(data,window_end+caldays(1));
 
-    if mode == "Fixed"
-        % if the training window is 'static', then it is enough to compute
-        % one only replica of the dataset and use it to backtest throughout
-        % the whole backtest window
-        VaR = var_calc(data,alpha,window_start,...
-            window_end,N);
+if strcmp(mode,'Fixed')
+    % if the training window is 'static', then it is enough to compute
+    % one only replica of the dataset and use it to backtest throughout
+    % the whole backtest window
+    VaR = var_calc(data,alpha,window_start,...
+        window_end,N);
 
-        exceptions = cell(1,3);
+    exceptions = cell(1,3);
     for i= 1:3
         exceptions{i} = (backtest_window.Total > VaR(i,:));
     end
 
-    elseif mode == "Rolling-window"
-        
-        % First/last day of the INITIAL training window, taken from the 
-        % inputs. i0 and j are the index in the original dataset associated 
-        % to the training start and end date given in input:
+elseif strcmp(mode,'Rolling-window')
+    
+    % First/last day of the INITIAL training window, taken from the 
+    % inputs. i0 and j are the index in the original dataset associated 
+    % to the training start and end date given in input:
 
-        i0 = find(data.Date==window_start);
-        j = find(data.Date==window_end);
-        VaR = zeros(3,2,size(backtest_window,1));
-        exceptions = cell(1,3);
+    i0 = find(data.Date==window_start);
+    j = find(data.Date==window_end);
+    VaR = zeros(3,2,size(backtest_window,1));
+    exceptions = cell(1,3);
     
     % Set the time to keep track of the backtest
     t0 = tic;
@@ -132,65 +101,10 @@ backtest_window = data_split(data,window_end+caldays(1));
         end
     end
 
-    else
-        
-        % Guard against an unrecognised mode:
-        error('backtest:unknownMode', ...
-            "Unknown mode '%s'. Use 'Fixed' or 'Rolling-window'.", mode);
-    end                  
-end
-
-function x = localDatetimeScalar(x, name)
-% LOCALDATETIMESCALAR  Convert a date-like input to a scalar datetime.
-
-    if isdatetime(x)
-        if ~isscalar(x)
-            error('backtest:dateNotScalar', ...
-                '%s must be a scalar datetime.', name);
-        end
-        return
-    end
-
-    if ischar(x) || (isstring(x) && isscalar(x))
-        x = localParseDateText(x, name);
-        return
-    end
-
-    error('backtest:invalidDateType', ...
-        '%s must be a scalar datetime or a scalar text value.', name);
-end
-
-function x = localParseDateText(x, name)
-% LOCALPARSEDATETEXT  Parse supported date text without locale guessing.
-
-    x = string(x);
-    formats = ["yyyy-MM-dd", "dd/MM/yyyy"];
-
-    for i = 1:numel(formats)
-        try
-            candidate = datetime(x, 'InputFormat', formats(i));
-        catch
-            candidate = NaT;
-        end
-
-        if ~isnat(candidate)
-            x = candidate;
-            return
-        end
-    end
-
-    error('backtest:invalidDateFormat', ...
-        '%s must use yyyy-MM-dd or dd/MM/yyyy.', name);
-end
-
-function mustBeDatetimeTextScalar(x)
-% MUSTBEDATETIMETEXTSCALAR  Validate a scalar datetime or scalar text input.
-
-    is_text_scalar = ischar(x) || (isstring(x) && isscalar(x));
-    is_datetime_scalar = isdatetime(x) && isscalar(x);
-
-    if ~(is_text_scalar || is_datetime_scalar)
-        error('backtest:invalidDateInput', ...
-            'Date inputs must be scalar datetimes or scalar text values.');
-    end
+else
+    
+    % Guard against an unrecognised mode:
+    error('backtest:unknownMode', ...
+        "Unknown mode '%s'. Use 'Fixed' or 'Rolling-window'.", mode);
+end                  
 end

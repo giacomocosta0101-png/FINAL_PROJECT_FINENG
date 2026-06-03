@@ -22,18 +22,6 @@ arguments
                     mustBeGreaterThanOrEqual(X, 0)}
 end
 
-%% Input checks
-
-if size(L,1) ~= size(L,2)
-    error('semi_parametric_losses:invalidL', ...
-        'L must be a square matrix.');
-end
-
-if size(L,1) ~= numel(p) || size(X,2) ~= numel(p)
-    error('semi_parametric_losses:dimensionMismatch', ...
-        'Dimensions of L, p and X must agree.');
-end
-
     U_sim = semi_parametric_sim(L, p, N);
     X_new = zeros(N,size(X,2));
     

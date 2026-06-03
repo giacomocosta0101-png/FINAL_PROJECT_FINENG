@@ -20,15 +20,6 @@ arguments
     N (1,1) double {mustBeReal, mustBeFinite, mustBeInteger, mustBePositive}
 end
 
-%% Input checks
-
-if ~iscell(calibrated_parameters{1}) || ...
-        ~isstruct(calibrated_parameters{2}) || ...
-        ~isstruct(calibrated_parameters{3})
-    error('mat_sim:invalidParameters', ...
-        'calibrated_parameters must follow the output structure of calibr_wrapper.');
-end
-
 obj = cell(3, 1); % Initialize the output cell array
 
 %% Zero-Mixed
