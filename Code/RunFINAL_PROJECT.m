@@ -207,3 +207,4 @@ mode = 'Rolling-window';
 %%
 plot_backtest_lomax(backtest_window, exc_lomax_rolling,...
     VaR_lomax_rolling, mode);
+
