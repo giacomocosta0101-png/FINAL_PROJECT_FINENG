@@ -1,7 +1,7 @@
 function ci = zero_mixed_bootstrap_fixed(zero_mixed, alpha, N, B)
-%
-% Bootstraps active-set probabilities from simulated case assignments and
-% recalibrates rho from one fixed-count simulated replica at a time.
+% ZERO_MIXED_BOOTSTRAP_FIXED  Bootstraps active-set probabilities from 
+% simulated case assignments and recalibrates rho from one fixed-count 
+% simulated replica at a time.
 %
 % INPUT:
 %   zero_mixed : output of zero_mixed_calibration

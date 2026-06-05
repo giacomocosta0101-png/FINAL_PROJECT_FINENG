@@ -1,7 +1,6 @@
 function R = calibration_rho_zero_mixed(X, mu, sigma)
-%
-% Calibrates the Gaussian copula correlation matrix for the positive
-% marginals of a zero-mixed model.
+% CALIBRATION_RHO_ZERO_MIXED  Calibrates the Gaussian copula correlation 
+% matrix for the positive marginals of a zero-mixed model.
 %
 % INPUT:
 %   X      : N x d matrix of strictly positive observations
@@ -30,17 +29,14 @@ end
 mu = mu(:)';
 sigma = sigma(:)';
 
-
 %% Compute the estimator 
 
 if N > d
-
     Y = (log(X) - mu) ./ sigma;
     R = (Y'*Y)/N;
 
 else
 
     R = eye(d);
-
 
 end

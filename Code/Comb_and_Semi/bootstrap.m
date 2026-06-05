@@ -40,19 +40,23 @@ function [rho_CI, p_CI, rho_hat, pi_hat]= bootstrap(rho,p,mu,sigma,model,N,B,alp
 if strcmp(model,'Comb-Bernoulli')
     flag = 1;
     generate_replica = @(Chol)comb_bern_sim(Chol, mu, sigma, p, N);
+
 elseif strcmp(model,'Semi-parametric')
     generate_replica = @(Chol)semi_parametric_sim(Chol,p,N);
     flag = 2;
+
 else
     error('bootstrap:unknownModel', ...
         "Unknown model '%s'. Use 'Comb-Bernoulli' or 'Semi-parametric'.", model);
 end
 
-R = squareform(rho)+eye(3);
-L = chol(R,'lower');
 
 d = numel(p);
-m = d*(d-1)/2;           % number of correlations
+m = d*(d-1)/2;  % number of correlations
+
+R = squareform(rho)+eye(d);
+L = chol(R,'lower');
+   
 rho_hat = zeros(B, m);
 pi_hat = zeros(B,m);
 p_calibr = p;
@@ -69,12 +73,15 @@ for i = 1:B
     replica = generate_replica(L);
 
     if flag == 1
+
         % Re-estimation of the parameters from the simulated replica:
         [p_hat,mu_hat,sigma_hat]= marginal_parameter_calibration(replica);
+
         % Update the cdf with the calibrated parameters:
         cdf = marginal_cdf(mu_hat,sigma_hat,p_hat);
         U = cdf(replica);
         p_calibr = p_hat;
+
     else
         % As explained in Algorithm 1, we consider the set of Uniform as
         % the 'simulated' ecdf of the replica:
@@ -87,7 +94,7 @@ for i = 1:B
     if mod(i, 50) == 0 || i == B   % Prints every 50 iterations
         elapsed = toc(t0);
         eta = elapsed / i * (B - i);
-        fprintf('Iter %4d/%d | trascorso %6.1fs | ETA %6.1fs\n', ...
+        fprintf('Iter %4d/%d | elapsed %6.1fs | ETA %6.1fs\n', ...
             i, B, elapsed, eta);
     end
 

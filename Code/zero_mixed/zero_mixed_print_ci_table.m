@@ -1,6 +1,6 @@
 function zero_mixed_print_ci_table(ci, alpha)
-%
-% Prints bootstrap confidence intervals in a compact paper-style format.
+% ZERO_MIXED_PRINT_CI_TABLE  Prints bootstrap confidence intervals in a 
+% compact paper-style format.
 %
 % INPUT:
 %   ci    : one struct, or a cell array of structs returned by

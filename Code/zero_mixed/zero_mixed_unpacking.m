@@ -1,7 +1,6 @@
 function [rho_vec, prob_vec, rho_labels, prob_labels] = zero_mixed_unpacking(zero_mixed)
-%
-% Unpacks the output of zero_mixed_calibration into flat vectors of
-% probabilities and correlations.
+% ZERO_MIXED_UNPACKING  Unpacks the output of zero_mixed_calibration into 
+% flat vectors of probabilities and correlations.
 %
 % INPUT:
 %   zero_mixed : 1 x cases cell array returned by zero_mixed_calibration

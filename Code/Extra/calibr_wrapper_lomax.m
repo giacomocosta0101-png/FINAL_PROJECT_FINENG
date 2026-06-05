@@ -1,4 +1,4 @@
-function calibrated_parameters = calibr_wrapper(X)
+function calibrated_parameters = calibr_wrapper_lomax(X)
 % CALIBR_WRAPPER  Main wrapper to calibrate three different copula models 
 % for zero-inflated data.
 %
@@ -20,20 +20,40 @@ arguments
                     mustBeGreaterThanOrEqual(X, 0)}
 end
 
+%% Input checks
+
+if size(X,2) ~= 3
+    error('calibr_wrapper:invalidDimension', ...
+        'X must have exactly 3 columns.');
+end
+
+if any(sum(X > 0, 1) == 0)
+    error('calibr_wrapper:noPositiveObservations', ...
+        'Each column of X must contain at least one strictly positive observation.');
+end
+
+num_unique_positive = arrayfun(@(j) numel(unique(X(X(:,j) > 0,j))), 1:3);
+if any(num_unique_positive < 2)
+    error('calibr_wrapper:degeneratePositiveTail', ...
+        'Each column of X must contain at least two distinct strictly positive values.');
+end
+
 calibrated_parameters = cell(3,1);
 
 
 %% Zero-Mixed
 
+
 zero_mixed = zero_mixed_calibration(X);
+
 calibrated_parameters{1} = zero_mixed; 
 
 %% Comb-Bernoulli
 comb_ber = struct();
-[p, mu, sigma] = marginal_parameter_calibration(X);
-cdf_comb_bernoulli = marginal_cdf(mu,sigma,p);
+[mu, sigma, p] = marginal_parameter_calibration_lomax(X);
+cdf_comb_bernoulli = marginal_cdf_lomax(p, mu,sigma);
 
-U_CB = cdf_comb_bernoulli(X);
+U_CB = cdf_comb_bernoulli(X)
 [rho_CB,~] = calibrate_model(U_CB,p);
 
 comb_ber.p = p;
@@ -41,7 +61,9 @@ comb_ber.mu= mu;
 comb_ber.sigma = sigma;
 comb_ber.rho = rho_CB;
 
+
 calibrated_parameters{2} = comb_ber; 
+
 
 %% Semi-Parametric
 
@@ -62,6 +84,8 @@ semi_par.sigma = sigma;
 semi_par.rho = rho_SP2;
 semi_par.X = X;
 
+
 calibrated_parameters{3} = semi_par; 
+
 
 end

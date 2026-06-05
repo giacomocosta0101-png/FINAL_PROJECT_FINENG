@@ -31,9 +31,9 @@ sigma =calibrated_parameters{2}.sigma;
 p = calibrated_parameters{2}.p;
 rho = calibrated_parameters{2}.rho;
 
-% define the cholesky factorization at the begninning to avoid doing it each
+% Define the Cholesky factorization at the begninning to avoid doing it each
 % iteration
-R = squareform(rho)+eye(3);
+R = squareform(rho)+eye(length(mu));
 L = chol(R,'lower');
 
 X_comb_ber = comb_bern_sim(L, mu, sigma, p, N);
@@ -43,9 +43,9 @@ p = calibrated_parameters{3}.p;
 rho = calibrated_parameters{3}.rho;
 X = calibrated_parameters{3}.X;
 
-% define the cholesky factorization at the begninning to avoid doing it each
+% Define the Cholesky factorization at the begninning to avoid doing it each
 % iteration
-R = squareform(rho)+eye(3);
+R = squareform(rho)+eye(length(mu));
 L = chol(R,'lower');
 
 X_semi_parametric = semi_parametric_losses(L,p, N,X);

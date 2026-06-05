@@ -1,11 +1,8 @@
 % Project 6: Copula calibration
 
-code_dir = fileparts(mfilename('fullpath'));
-filename = fullfile(code_dir, "danishmulti.csv");
-addpath(code_dir, ...
-    fullfile(code_dir, 'Comb_and_Semi'), ...
-    fullfile(code_dir, 'zero_mixed'), ...
-    fullfile(code_dir, 'Backtest'));
+
+filename = "danishmulti.csv";
+addpath('Comb_and_Semi','Backtest\','Extra\','zero_mixed\');
 
 data = readDataset(filename);
 
@@ -53,7 +50,6 @@ zero_mixed_print_ci_table(ci_zero_mixed)
 fprintf("\nZero-mixed bootstrap with fixed active-set counts\n");
 rng(762);
 ci_zero_mixed_fixed = zero_mixed_bootstrap_fixed(zero_mixed, alpha, N, B);
-
 
 zero_mixed_print_ci_table(ci_zero_mixed_fixed)
 

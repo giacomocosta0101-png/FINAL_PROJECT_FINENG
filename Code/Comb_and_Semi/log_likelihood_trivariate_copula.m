@@ -15,6 +15,7 @@ function log_likelihood = log_likelihood_trivariate_copula(state_matrix,theta,..
 % OUTPUT
 %   log_likelihood : scalar
 
+% Compute R from the spherical parameterization
 L = [1 0 0;
     cos(theta(1)) sin(theta(1)) 0;
     cos(theta(2)) cos(theta(3))*sin(theta(2)) sin(theta(3))*sin(theta(2))];
@@ -38,8 +39,8 @@ for i = 1:num_comb
     zt  = Z(rows, tt);
 
     if isempty(ss)
-        % No active component: only the Gaussian CDF on the inactive block.
-        % All rows share the same z_T (= norminv(1-p)), evaluate once.
+        % No active component: only the Gaussian CDF on the inactive block
+        % All rows share the same z_T (= norminv(1-p)), evaluate once
         log_dens_i = log( mvncdf(zt(1,:), zeros(1, numel(tt)), Rtt) );
         log_dens   = log_dens_i * size(zt,1);
 

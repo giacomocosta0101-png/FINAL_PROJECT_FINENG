@@ -1,6 +1,6 @@
 function sim = copula_sim(R, mu, sigma, N)
-%
-% Simulates observations from a Gaussian copula with lognormal marginals.
+% COPULA_SIM  Simulates observations from a Gaussian copula with lognormal 
+% marginals.
 %
 % INPUT:
 %   R      : d x d Gaussian copula correlation matrix

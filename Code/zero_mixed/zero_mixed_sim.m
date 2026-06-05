@@ -1,6 +1,5 @@
 function sim = zero_mixed_sim(zero_mixed, N, B)
-%
-% Simulates replicas from the calibrated zero-mixed model.
+% ZERO_MIXED_SIM  Simulates replicas from the calibrated zero-mixed model.
 %
 % INPUT:
 %   zero_mixed : 1 x cases cell array returned by zero_mixed_calibration

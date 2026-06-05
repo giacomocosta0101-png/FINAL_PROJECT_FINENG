@@ -1,6 +1,6 @@
 function active_sets = get_active_sets(d)
-%
-% Builds the list of active sets for a d-dimensional zero-mixed model.
+% GET_ACTIVE_SETS  Builds the list of active sets for a d-dimensional 
+% zero-mixed model.
 %
 % INPUT:
 %   d           : model dimension

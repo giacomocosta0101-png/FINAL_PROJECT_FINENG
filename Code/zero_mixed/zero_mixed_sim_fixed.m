@@ -1,7 +1,7 @@
 function sim = zero_mixed_sim_fixed(zero_mixed, N, B)
-%
-% Simulates replicas from the calibrated zero-mixed model while keeping
-% the number of observations in each active set fixed across replicas.
+% ZERO_MIXED_SIM_FIXED  Simulates replicas from the calibrated zero-mixed 
+% model while keeping the number of observations in each active set fixed 
+% across replicas.
 %
 % INPUT:
 %   zero_mixed : 1 x cases cell array returned by zero_mixed_calibration
@@ -21,7 +21,7 @@ end
 %% Initial setup
 
 K = numel(zero_mixed);
-%trick to get the number of cols in the general case
+% Number of cols in the general case
 d = size(zero_mixed{K}.R , 2);
 
 active_sets = get_active_sets(d);
@@ -80,9 +80,8 @@ end
 
 
 function counts = fixed_case_counts(prob, N)
-%
-% Converts expected active-set frequencies into integer counts that sum
-% exactly to N.
+% FIXED_CASE_COUNTS  Converts expected active-set frequencies into integer 
+% counts that sum exactly to N.
 %
 % INPUT:
 %   prob   : vector of active-set probabilities

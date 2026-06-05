@@ -1,6 +1,6 @@
 function zero_mixed = zero_mixed_calibration(X)
-%
-% Calibrates the zero-mixed model on a generic N x d dataset.
+% ZERO_MIXED_CALIBRATION  Calibrates the zero-mixed model on a generic 
+% N x d dataset.
 %
 % INPUT:
 %   X          : N x d matrix with non-negative observations
@@ -31,7 +31,6 @@ end
 case_data = zero_mixed_case_data(X);
 N = case_data.N;
 cases = case_data.cases;
-
 
 %% Calibration loop
 
@@ -64,8 +63,7 @@ for k = 1:cases
 
     end
 
-
-    % Calibrate the copula corr matrix
+    % Calibrate the copula correlation matrix
     if numel(idx_active) >= 2
         if out.n > 0 && all(out.sigma > 0)
             out.R = calibration_rho_zero_mixed(X_active, out.mu, out.sigma);
@@ -77,7 +75,5 @@ for k = 1:cases
     zero_mixed{k} = out;
 
 end
-
-
 
 end

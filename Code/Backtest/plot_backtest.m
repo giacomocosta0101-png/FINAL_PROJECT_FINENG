@@ -20,7 +20,7 @@ function plot_backtest(backtest_window, exceptions, VaR, mode, varargin)
 
 %   plot_backtest(bw, exc, VaR, mode)
 %   plot_backtest(..., 'ModelNames',    {'M1','M2','M3'})
-%   plot_backtest(..., 'TopK',          5)      % quante eccezioni annotare
+%   plot_backtest(..., 'TopK',          5)   how many exceptions to mark
 %   plot_backtest(..., 'AnnotateLevel', 99)     % 99 | 95 | 'both'
 
 arguments
@@ -94,7 +94,6 @@ N = height(backtest_window);
         xlabel('Data'); ylabel('Loss / VaR');
         legend('Location','best');
 
-        % --- annoto solo le TopK eccezioni più severe ---
         switch annLevel
             case 99,   cand = idx99;
             case 95,   cand = idx95;
@@ -111,11 +110,9 @@ N = height(backtest_window);
                 c = col95;
                 if exc(i,2), c = col99; end
 
-                % linea verticale tratteggiata dal marker all'asse x
                 plot([dates(i) dates(i)], [ybase losses(i)], '--', ...
                      'Color', c, 'LineWidth', 0.8, 'HandleVisibility','off');
 
-                % label vicino al marker, ruotata 45°
                 text(dates(i), losses(i), [' ' datestr(dates(i),'dd/mm/yy')], ...
                      'Rotation', 45, ...
                      'HorizontalAlignment','left', ...

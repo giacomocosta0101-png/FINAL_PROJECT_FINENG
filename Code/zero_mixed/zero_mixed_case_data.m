@@ -1,6 +1,6 @@
 function case_data = zero_mixed_case_data(X)
-%
-% Precomputes active-set metadata for zero-mixed calibration.
+% ZERO_MIXED_CASE_DATA  Precomputes active-set metadata for zero-mixed 
+% calibration.
 %
 % INPUT:
 %   X         : N x d matrix with non-negative observations

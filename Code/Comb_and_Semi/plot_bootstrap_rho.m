@@ -30,7 +30,7 @@ function plot_bootstrap_rho(rho_hat, rho_point, alpha)
         scatter(rho_hat(:,i), rho_hat(:,j), 10, [0.45 0.65 0.95], 'filled', ...
                 'MarkerFaceAlpha', 0.30, 'DisplayName','Bootstrap');
 
-        % Mahalanobis ellipse from bootstrap covariance
+        % Ellipse from bootstrap covariance
         mu_b = mean(rho_hat(:, [i j]), 1);
         S_b  = cov( rho_hat(:, [i j]) );
         [ex, ey] = ellipse_xy(mu_b, S_b, chi2c, 200);
@@ -56,11 +56,11 @@ function plot_bootstrap_rho(rho_hat, rho_point, alpha)
     sgtitle('Bootstrap distribution of Gaussian-copula correlations');
 end
 
-% --- helper ----------------------------------------------------------------
+
 function [x, y] = ellipse_xy(mu, S, chi2c, npts)
 % Points on the ellipse (x-mu)' S^{-1} (x-mu) = chi2c
     t = linspace(0, 2*pi, npts);
-    L = chol((S+S.')/2, 'lower');     % simmetrizza per sicurezza numerica
+    L = chol((S+S.')/2, 'lower');     % symmetry check
     XY = sqrt(chi2c) * L * [cos(t); sin(t)] + mu(:);
     x = XY(1,:);  y = XY(2,:);
 end

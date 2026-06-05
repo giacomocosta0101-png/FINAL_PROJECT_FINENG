@@ -1,6 +1,6 @@
 function ci = zero_mixed_bootstrap(zero_mixed, alpha, N, B)
-%
-% Simulates and recalibrates one bootstrap replica at a time, then computes
+% ZERO_MIXED_BOOTSTRAP  Simulates and recalibrates one bootstrap replica at
+% a time, then computes
 % Bonferroni-adjusted confidence intervals for probabilities and rho
 % parameters.
 %
@@ -49,9 +49,9 @@ parfor b = 1:B
     [rho_mat(b,:), prob_mat(b,:)] = zero_mixed_unpacking(zero_mixed_b);
 end
 
-%% Output construction nightmare
+%% Output construction
 
-m = n_rho + n_prob; %Bonferroni correction
+m = n_rho + n_prob; % Bonferroni correction
 ci = cell(1, numel(alpha));
 
 for a = 1:numel(alpha)
