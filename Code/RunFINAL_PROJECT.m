@@ -1,7 +1,7 @@
 % Project 6: Copula calibration
 
 filename = "danishmulti.csv";
-addpath('Comb_and_Semi', 'zero_mixed', 'Backtest');
+addpath('Comb_and_Semi', 'zero_mixed', 'Backtest', 'higher_dim', 'Lomax');
 
 data = readDataset(filename);
 
@@ -178,3 +178,32 @@ plot_backtest(backtest_window, exc_rolling_window,...
 fprintf("\nChrisoffersen test\n");
 
 res_rolling = christoffersen_test(exc_rolling_window);
+
+
+%% EXTRA: Comb-Bernoulli with Lomax marginals
+
+%data = readDataset(filename);
+
+training_window_start_date = datetime(1980,1,1);
+training_window_end_date = datetime(1983,12,31);
+
+N = 1e6;
+alpha = [0.05 0.01];
+
+%% a. Static Calibration
+rng(732)
+mode = 'Fixed';
+[backtest_window,exc_lomax_static,VaR_lomax_static] = backtest_lomax(data,alpha,...
+    training_window_start_date,training_window_end_date,N,mode);
+%%
+plot_backtest_lomax(backtest_window, exc_lomax_static,...
+    VaR_lomax_static, mode);
+
+%% b. Rolling-window calibration
+rng(732)
+mode = 'Rolling-window';
+[~,exc_lomax_rolling,VaR_lomax_rolling] = backtest_lomax(data,alpha,...
+    training_window_start_date,training_window_end_date,N,mode);
+%%
+plot_backtest_lomax(backtest_window, exc_lomax_rolling,...
+    VaR_lomax_rolling, mode);
