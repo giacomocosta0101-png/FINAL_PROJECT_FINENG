@@ -82,16 +82,16 @@ N = height(backtest_window);
         if ~isempty(idx95)
             scatter(dates(idx95), losses(idx95), 50, col95, 'filled', ...
                     'MarkerEdgeColor','k','LineWidth',0.5, ...
-                    'DisplayName', sprintf('Eccezione 95%% (%d)', numel(idx95)));
+                    'DisplayName', sprintf('Exception 95%% (%d)', numel(idx95)));
         end
         if ~isempty(idx99)
             scatter(dates(idx99), losses(idx99), 70, col99, 'filled', ...
                     'MarkerEdgeColor','k','LineWidth',0.8, ...
-                    'DisplayName', sprintf('Eccezione 99%% (%d)', numel(idx99)));
+                    'DisplayName', sprintf('Exception 99%% (%d)', numel(idx99)));
         end
 
         title(sprintf('Backtest VaR – %s (%s)', model_names{m}, mode));
-        xlabel('Data'); ylabel('Loss / VaR');
+        xlabel('Date'); ylabel('Loss / VaR');
         legend('Location','best');
 
         switch annLevel

@@ -12,7 +12,7 @@ function data = readDataset(filename)
 
     raw_data = [day_zero; raw_data];
     
-    %Group together duplicates:
+    % Group together duplicates:
     data_adj = groupsummary(raw_data,"Date","sum");
     data_adj = removevars(data_adj,{'GroupCount'});
  
