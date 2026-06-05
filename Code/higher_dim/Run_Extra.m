@@ -11,32 +11,44 @@ profits = data.Profits(:);
 
 X = [building contents profits];
 
+%% Comparison of new algorithm with d = 3
+
+[p,mu,sigma]= marginal_parameter_calibration(X);
+
+fprintf("\nMarginal cdf parameters:\n");
+for i = 1:length(mu)
+    fprintf("\n mu_%d    = %.2f", i, mu(i));
+    fprintf("\n sigma_%d = %.2f\n", i, sigma(i));
+end
+
+cdf_comb_bernoulli = marginal_cdf(mu,sigma,p);
+U_CB = cdf_comb_bernoulli(X);
+R_CB = calibrate_model_generalized(U_CB,p);
+toc
+
+fprintf("\n Comb-Bernoulli Correlation matrix:\n");
+disp(R_CB);
+
 %% Generate a new column
 
 %For example a "solar panel"
 %If there is a fire then the claim on solar panel is more likely and bigger
 % If there is no fire, there could have been an hailstorm
+rng(762)
+N = size(X, 1);
 
+col_pick   = randi(3, N, 1);
+linear_idx = sub2ind([N, 3], (1:N).', col_pick);
+X4_base    = X(linear_idx);
 
-for i=1:size(X,1)
-    U = rand(1);
-    if X(i,1)==0
-        if U < 0.8
-            X(i,4) = 0;
-        else
-            noise = exp(randn(1)*0.2 + 0.1);
-            X(i,4) = noise;
-        end
-    else
-        if U < 0.3
-            X(i,4) = 0;
-        else
-            noise = exp(randn(1)*0.1 + 0.7);
-            X(i,4) = noise;
-        end
-    end
+% perturbazione lognormale solo dove X4_base > 0
+sig_noise  = 0.30;                                  % più grande = correlazione più bassa
+noise      = exp( sig_noise * randn(N, 1) );
+pos        = X4_base > 0;
+X4         = zeros(N, 1);
+X4(pos)    = X4_base(pos) .* noise(pos);
 
-end
+X(:,4) = X4;
 
 %% General parameters
 
@@ -77,3 +89,11 @@ toc
 
 fprintf("\n Correlation matrix:\n");
 disp(R_CB);
+
+
+rho_S    = corr(X, 'type', 'Spearman');
+R_target = 2 * sin(pi * rho_S / 6)
+gap = norm(R_CB - R_target, 'fro');
+fprintf('||R_fit - R_target||_F = %.3f\n', gap);
+fprintf('max |R_fit - R_target| per entry = %.3f\n', ...
+    max(abs(R_CB(:) - R_target(:))));

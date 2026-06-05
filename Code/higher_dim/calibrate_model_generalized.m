@@ -40,7 +40,20 @@ function [R] = calibrate_model_generalized(U,p)
 
     d = size(U,2);
     
-    h_opt = fminunc(nll, zeros(1, d*(d-1)/2), options);
+    n_starts = 5;
+    best_R   = [];
+    best_nll = Inf;
+    for s = 1:n_starts
+        h0 = 0.5 * randn(1, d*(d-1)/2);
+        [h_try, fval] = fminunc(nll, h0, options);
+        if fval < best_nll
+            best_nll = fval;
+            best_R   = corr_from_cholesky_param(h_try, d);
+        end
+    end
+    R = best_R;
 
-    R = corr_from_cholesky_param(h_opt, d);
+    %R = corr_from_cholesky_param(h_opt, d);
+    
 end
+

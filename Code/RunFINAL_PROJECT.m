@@ -36,7 +36,10 @@ fprintf("\n p_Profits   = %.2f\n", p(3));
 
 %% Zero-mixed calibration
 fprintf("\nZero-mixed\n");
+
+tic
 zero_mixed = zero_mixed_calibration(X);
+toc
 
 %% Zero-mixed bootstrap
 
@@ -81,15 +84,11 @@ fprintf("\n  p1: [ %.3f , %.3f ]\n", p_CI_CB(1,1), p_CI_CB(1,2));
 fprintf("  p2: [ %.3f , %.3f ]\n", p_CI_CB(2,1), p_CI_CB(2,2));
 fprintf("  p3: [ %.3f , %.3f ]\n", p_CI_CB(3,1), p_CI_CB(3,2));
 
-%% DA CAPIRE
-
-plot_bootstrap_rho(rho_hat_CB, rho_CB, alpha);          % 3 pannelli pairwise
-% plot_bootstrap_rho_3d(rho_hat_CB, rho_CB, alpha);     % opzionale
-
 %% Semi-parametric calibration
 
 fprintf("\nSemi-Parametric\n");
 
+tic
 cdf_semiparametric = cumulative_cdf_semi_parametric_vec(p, X);
 U_SP = zeros(size(X));
 
@@ -98,6 +97,7 @@ for i = 1:size(X,2)
 end
 
 [rho_SP,~] = calibrate_model(U_SP, p);
+toc
 
 R_SP = squareform(rho_SP) + eye(length(rho_SP));
 fprintf("\n Correlation matrix:\n");
@@ -180,9 +180,9 @@ fprintf("\nChrisoffersen test\n");
 res_rolling = christoffersen_test(exc_rolling_window);
 
 
-%% EXTRA: Comb-Bernoulli with Lomax marginals
 
-%data = readDataset(filename);
+
+%% EXTRA: Comb-Bernoulli with Lomax marginals
 
 training_window_start_date = datetime(1980,1,1);
 training_window_end_date = datetime(1983,12,31);
@@ -191,7 +191,7 @@ N = 1e6;
 alpha = [0.05 0.01];
 
 %% a. Static Calibration
-rng(732)
+rng(762)
 mode = 'Fixed';
 [backtest_window,exc_lomax_static,VaR_lomax_static] = backtest_lomax(data,alpha,...
     training_window_start_date,training_window_end_date,N,mode);
@@ -200,7 +200,7 @@ plot_backtest_lomax(backtest_window, exc_lomax_static,...
     VaR_lomax_static, mode);
 
 %% b. Rolling-window calibration
-rng(732)
+rng(762)
 mode = 'Rolling-window';
 [~,exc_lomax_rolling,VaR_lomax_rolling] = backtest_lomax(data,alpha,...
     training_window_start_date,training_window_end_date,N,mode);

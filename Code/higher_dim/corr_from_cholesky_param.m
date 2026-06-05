@@ -61,7 +61,4 @@ function [R, L] = corr_from_cholesky_param(h, d)
     % Step 4: correlation matrix
     R = L' * L;
 
-    % Strict symmetry and exact unit diagonal (clean roundoff)
-    R = 0.5 * (R + R');
-    R(1:d+1:end) = 1;
 end
