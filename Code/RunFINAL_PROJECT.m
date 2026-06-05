@@ -1,7 +1,7 @@
 % Project 6: Copula calibration
 
 filename = "danishmulti.csv";
-addpath('Comb_and_Semi','Backtest\','Extra\','zero_mixed\');
+addpath('Comb_and_Semi', 'zero_mixed', 'Backtest');
 
 data = readDataset(filename);
 
