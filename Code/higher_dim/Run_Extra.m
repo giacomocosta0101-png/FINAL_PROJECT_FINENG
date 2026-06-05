@@ -1,13 +1,7 @@
 % Project 6: Copula calibration
 
-extra_dir = fileparts(mfilename('fullpath'));
-code_dir = fileparts(extra_dir);
-filename = fullfile(code_dir, "danishmulti.csv");
-addpath(code_dir, ...
-    fullfile(code_dir, 'Comb_and_Semi'), ...
-    fullfile(code_dir, 'zero_mixed'), ...
-    fullfile(code_dir, 'Backtest'), ...
-    fullfile(code_dir, 'Extra'));
+filename = "danishmulti.csv";
+addpath('Comb_and_Semi', 'zero_mixed', 'Backtest', 'higher_dim', 'Lomax');
 
 data = readDataset(filename);
 
